@@ -1,0 +1,9 @@
+@echo off
+echo Mali Musavir Paneli baslatiliyor...
+cd /d "%~dp0backend"
+echo Gerekli paketler kontrol ediliyor...
+pip install -r requirements.txt -q
+echo Sunucu baslatiliyor...
+start "" http://localhost:8000
+python -m uvicorn main:app --host 127.0.0.1 --port 8000
+pause

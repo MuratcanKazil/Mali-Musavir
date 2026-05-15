@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<title>Mali Müşavir Paneli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F4EF;--bg2:#EFEBE3;--white:#FFFFFF;
+  --ink:#18160F;--ink2:#4B4740;--ink3:#9B9589;
+  --green:#1C5C34;--green2:#2A7A48;--green3:#E8F3EC;
+  --red:#B5261E;--red2:#FDECEA;
+  --amber:#C46A00;--amber2:#FFF4E5;
+  --blue:#1A52A8;--blue2:#EBF1FB;
+  --wa:#25D366;--wa2:#E8FBF0;--wa-dark:#128C7E;
+  --border:#DDD8CE;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(24,22,15,.07),0 6px 20px rgba(24,22,15,.06);
+  --shadow2:0 2px 8px rgba(24,22,15,.10),0 20px 60px rgba(24,22,15,.15);
+  --serif:'Lora',Georgia,serif;--sans:'Plus Jakarta Sans',sans-serif;
+  --sidebar:240px;
+}
+html,body{height:100%;margin:0;padding:0;font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;overflow:hidden}
+button,input,select,textarea{font-family:var(--sans)}
+button{cursor:pointer;border:none;outline:none}
+input,select,textarea{outline:none}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--ink);position:relative;overflow:hidden}
+.login-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(28,92,52,.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(28,92,52,.2) 0%,transparent 50%)}
+.login-card{background:#fff;border-radius:16px;padding:44px 40px;width:100%;max-width:400px;box-shadow:var(--shadow2);position:relative;z-index:1;animation:modal-in .3s ease}
+.login-logo{font-family:var(--serif);font-size:26px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:32px}
+#root{display:flex;flex-direction:column;height:100vh}
+.app-shell{display:flex;flex:1;height:100vh;overflow:hidden;width:100%}
+.sidebar{width:var(--sidebar);background:var(--ink);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;height:100vh}
+.sidebar-header{padding:28px 20px 22px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo{font-family:var(--serif);font-size:19px;color:#fff;font-weight:500;line-height:1.3;margin-bottom:3px}
+.sidebar-sub{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px}
+.sidebar-nav{padding:14px 10px;flex:1}
+.nav-section{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.25);padding:14px 12px 6px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;color:rgba(255,255,255,.55);font-size:13px;font-weight:400;cursor:pointer;transition:all .15s;margin-bottom:2px;width:100%;text-align:left;background:none;border:none}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.nav-item.active{background:rgba(255,255,255,.13);color:#fff;font-weight:500}
+.nav-item svg{flex-shrink:0;opacity:.65}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08)}
+.user-info{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.user-dot{width:7px;height:7px;border-radius:50%;background:#6EE7A0;flex-shrink:0}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-width:0;min-height:0}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-title{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--ink)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.content{flex:1;overflow-y:auto;padding:28px;height:0}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--serif);font-size:16px;font-weight:500}
+.card-body{padding:22px}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)}
+.stat.warn::before{background:var(--amber)}
+.stat.danger::before{background:var(--red)}
+.stat.wa::before{background:var(--wa)}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);font-weight:600;margin-bottom:10px}
+.stat-value{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1;margin-bottom:4px}
+.stat.warn .stat-value{color:var(--amber)}
+.stat.danger .stat-value{color:var(--red)}
+.stat.wa .stat-value{color:var(--wa-dark)}
+.stat-sub{font-size:12px;color:var(--ink3)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;padding:10px 16px;border-bottom:2px solid var(--border);background:var(--bg)}
+td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
+.badge-green{background:var(--green3);color:var(--green)}
+.badge-red{background:var(--red2);color:var(--red)}
+.badge-amber{background:var(--amber2);color:var(--amber)}
+.badge-blue{background:var(--blue2);color:var(--blue)}
+.badge-gray{background:var(--bg2);color:var(--ink2)}
+.badge-wa{background:var(--wa2);color:var(--wa-dark)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:500;transition:all .15s;border:none;cursor:pointer}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:var(--green2)}
+.btn-ghost{background:transparent;color:var(--ink2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg2)}
+.btn-danger{background:var(--red2);color:var(--red)}.btn-danger:hover{background:#fbd0cc}
+.btn-wa{background:var(--wa);color:#fff}.btn-wa:hover{background:var(--wa-dark)}
+.btn-sm{padding:5px 11px;font-size:12px;border-radius:6px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.form-control{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--ink);background:var(--white);transition:border-color .15s}
+.form-control:focus{border-color:var(--green)}
+select.form-control{cursor:pointer}
+textarea.form-control{resize:vertical;min-height:90px}
+.form-row{display:grid;gap:14px}.form-row.c2{grid-template-columns:1fr 1fr}.form-row.c3{grid-template-columns:1fr 1fr 1fr}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;color:var(--ink2)}
+.overlay{position:fixed;inset:0;background:rgba(24,22,15,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(2px)}
+.modal{background:var(--white);border-radius:16px;width:100%;max-width:540px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow2);animation:modal-in .2s ease}
+.modal-lg{max-width:680px}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-family:var(--serif);font-size:17px;font-weight:500}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0}
+.btn-close{background:none;border:none;font-size:22px;color:var(--ink3);cursor:pointer;line-height:1;padding:2px 6px;border-radius:6px}.btn-close:hover{background:var(--bg2)}
+@keyframes modal-in{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.wa-preview-bubble{background:#E7FFDB;border:1px solid #C8F5C0;border-radius:12px 12px 4px 12px;padding:13px 16px;font-size:13.5px;line-height:1.65;color:#1a1a1a;white-space:pre-wrap;word-break:break-word;position:relative;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.wa-preview-bubble::after{content:'✓✓';position:absolute;bottom:6px;right:10px;font-size:10px;color:#53bdeb}
+.wa-preview-wrap{background:#E5DDD5;border-radius:12px;padding:16px}
+.wa-phone-label{font-size:11px;color:var(--ink3);text-align:center;margin-bottom:8px;font-weight:500}
+.wa-open-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:var(--wa);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px;transition:background .15s}
+.wa-open-btn:hover{background:var(--wa-dark)}
+.wa-hint{font-size:11.5px;color:var(--ink3);text-align:center;margin-top:8px}
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:8px}
+.alert-error{background:var(--red2);color:var(--red)}
+.alert-success{background:var(--green3);color:var(--green)}
+.alert-info{background:var(--blue2);color:var(--blue)}
+.alert-wa{background:var(--wa2);color:var(--wa-dark)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+.spinner-dark{border-color:rgba(24,22,15,.15);border-top-color:var(--ink)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:48px 20px;color:var(--ink3)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.text-muted{color:var(--ink3)}
+.fw-600{font-weight:600}
+.loading-page{display:flex;align-items:center;justify-content:center;height:100vh;gap:12px;font-size:15px;color:var(--ink3)}
+.char-count{font-size:11px;color:var(--ink3);margin-top:4px;text-align:right}
+.fc .fc-toolbar-title{font-family:var(--serif);font-size:18px!important}
+.fc .fc-button-primary{background:var(--green)!important;border-color:var(--green)!important}
+.fc .fc-button-primary:hover{background:var(--green2)!important}
+.fc .fc-daygrid-event{border-radius:4px!important;font-size:11px!important;padding:1px 5px!important}
+.fc .fc-day-today{background:rgba(28,92,52,.05)!important}
+.cal-add-hint{font-size:12px;color:var(--ink3);margin-top:12px;text-align:center}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:var(--shadow2);z-index:9999;animation:toast-in .25s ease;display:flex;align-items:center;gap:10px;max-width:340px}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+.toast.wa{background:var(--wa-dark)}
+@keyframes toast-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.type-kdv{background:#EDE9FE;color:#5B21B6}
+.type-stopaj{background:#FEF3C7;color:#92400E}
+.type-muhasebe{background:#DBEAFE;color:#1E40AF}
+.type-gelir{background:#FCE7F3;color:#9D174D}
+.type-gecici{background:#D1FAE5;color:#065F46}
+.type-sgk{background:#FEE2E2;color:#991B1B}
+.type-kisisel{background:#F3F4F6;color:#374151}
+.type-damga{background:#FDF2F8;color:#9D174D}
+.type-oiv{background:#EEF2FF;color:#3730A3}
+.type-otv{background:#FFF7ED;color:#C2410C}
+.type-mtv{background:#F0FDF4;color:#166534}
+/* ── Takvim filtre barı ── */
+.cal-filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:12px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.cal-filter-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);flex-shrink:0}
+.cal-filter-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .15s;user-select:none}
+.cal-filter-chip:hover{border-color:var(--ink3);color:var(--ink2)}
+.cal-filter-chip.on{color:var(--ink)}
+.cal-filter-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .15s}
+/* ── Luca export buton ── */
+.btn-luca{background:#1C5C34;color:#fff}.btn-luca:hover{background:#14472A}
+.btn-excel{background:#217346;color:#fff}.btn-excel:hover{background:#1a5c38}
+/* ── Sticky table headers ── */
+.sticky-thead th{position:sticky;top:0;z-index:2;background:var(--bg);box-shadow:0 1px 0 var(--border)}
+/* ── WhatsApp gönderildi — satır pasifleştirme ── */
+.wa-sent-row{opacity:.45;transition:opacity .3s}
+.wa-sent-row td{color:var(--ink3)!important}
+.wa-sent-check{color:var(--wa-dark);font-size:11px;font-weight:700;margin-left:4px}
+/* ── Filtre chip butonları ── */
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:var(--white);color:var(--ink2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip:hover{border-color:var(--ink3)}
+.chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* ── Chart container ── */
+.chart-container{position:relative;height:220px}
+/* ── Evrak expiry renkleri ── */
+.expiry-warn{background:var(--amber2);color:var(--amber)}
+.expiry-ok{background:var(--green3);color:var(--green)}
+.expiry-none{background:var(--bg2);color:var(--ink3)}
+/* ── Tabs ── */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px}
+.tab-btn{padding:10px 20px;font-size:13px;font-weight:500;color:var(--ink3);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+.tab-btn:hover:not(.active){color:var(--ink2)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef}=React;
+const API_BASE='';
+
+async function api(path,opts={}){
+  const res=await fetch(`${API_BASE}/api${path}`,{
+    credentials:'include',
+    headers:{'Content-Type':'application/json',...(opts.headers||{})},
+    ...opts,
+    body:opts.body?JSON.stringify(opts.body):undefined,
+  });
+  if(res.status===401&&path!=='/auth/login'){window.__handleUnauth?.();throw new Error('Oturum sona erdi');}
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.detail||`Hata ${res.status}`);}
+  return res.json();
+}
+
+const PT_MAP={
+  kdv:{label:'KDV',cls:'type-kdv'},
+  stopaj:{label:'Stopaj',cls:'type-stopaj'},
+  muhasebe_ucreti:{label:'Muhasebe',cls:'type-muhasebe'},
+  gelir_vergisi:{label:'Gelir Vergisi',cls:'type-gelir'},
+  gecici_vergi:{label:'Geçici Vergi',cls:'type-gecici'},
+  sgk:{label:'SGK',cls:'type-sgk'},
+  kisisel:{label:'Kişisel',cls:'type-kisisel'},
+  damga_vergisi:{label:'Damga Vergisi',cls:'type-damga'},
+  ozel_iletisim_vergisi:{label:'Özel İletişim',cls:'type-oiv'},
+  otv:{label:'ÖTV',cls:'type-otv'},
+  motorlu_tasit_vergisi:{label:'MTV',cls:'type-mtv'},
+};
+const TypeBadge=({type})=>{const m=PT_MAP[type]||{label:type,cls:'type-kisisel'};return <span className={`badge ${m.cls}`}>{m.label}</span>;};
+
+const WA_SVG=<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.306A9.942 9.942 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.946 7.946 0 0 1-4.054-1.107l-.29-.173-3.002.788.803-2.924-.19-.3A7.96 7.96 0 0 1 4 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/></svg>;
+
+function Ico({n,s=14}){
+  const icons={
+    dashboard:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>,
+    clients:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    payments:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>,
+    calendar:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    templates:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+    logs:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+    settings:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+    check:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>,
+    logout:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+    plus:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+    edit:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    trash:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>,
+    send:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+    folder:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>,
+    activity:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+    personal:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><line x1="2" y1="10" x2="22" y2="10"/></svg>,
+  };
+  const el=icons[n];
+  if(!el)return null;
+  return <span style={{display:'inline-flex',alignItems:'center'}}>{React.cloneElement(el,{width:s,height:s})}</span>;
+}
+
+function Toast({msg,type,onClose}){
+  useEffect(()=>{if(msg){const t=setTimeout(onClose,3500);return()=>clearTimeout(t);}},[msg]);
+  if(!msg)return null;
+  return <div className={`toast ${type}`}><span style={{flex:1}}>{msg}</span><button onClick={onClose} style={{background:'none',border:'none',color:'inherit',cursor:'pointer',fontSize:18}}>×</button></div>;
+}
+
+function LoginPage({onLogin}){
+  const [form,setForm]=useState({username:'',password:''});
+  const [err,setErr]=useState('');
+  const [loading,setLoading]=useState(false);
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const submit=async()=>{
+    setErr('');setLoading(true);
+    try{const r=await api('/auth/login',{method:'POST',body:form});onLogin(r.username);}
+    catch(e){setErr(e.message);}finally{setLoading(false);}
+  };
+  return(
+    <div className="login-wrap">
+      <div className="login-card">
+        <div className="login-logo">Mali Müşavir</div>
+        <div className="login-sub">Asistan Paneli</div>
+        {err&&<div className="alert alert-error">{err}</div>}
+        <div className="form-group"><label className="form-label">Kullanıcı Adı</label><input className="form-control" value={form.username} onChange={e=>set('username',e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()} autoFocus/></div>
+        <div className="form-group"><label className="form-label">Şifre</label><input className="form-control" type="password" value={form.password} onChange={e=>set('password',e.target.value)} onKeyDown={e=>e.key==='Enter'&&submit()}/></div>
+        <button className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginTop:4}} onClick={submit} disabled={loading}>{loading?<span className="spinner"/>:'Giriş Yap'}</button>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({onNavigate}){
+  const [stats,setStats]=useState(null);
+  const [chartData,setChartData]=useState(null);
+  const [typeFilter,setTypeFilter]=useState('');
+  const [filteredPayments,setFilteredPayments]=useState(null);
+  const chartRef=useRef(null);
+  const chartInstance=useRef(null);
+
+  useEffect(()=>{
+    api('/dashboard/stats').then(setStats).catch(console.error);
+    api('/dashboard/monthly-chart').then(setChartData).catch(console.error);
+  },[]);
+
+  useEffect(()=>{
+    if(!chartData||!chartRef.current)return;
+    if(chartInstance.current)chartInstance.current.destroy();
+    const ctx=chartRef.current.getContext('2d');
+    chartInstance.current=new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels:chartData.map(d=>d.label),
+        datasets:[
+          {
+            label:'Tahsil Edilen Muhasebe (₺)',
+            data:chartData.map(d=>d.muhasebe_geliri),
+            backgroundColor:'rgba(28,92,52,.8)',
+            borderRadius:5,
+            order:3,
+          },
+          {
+            label:'Hedef Ciro (₺)',
+            data:chartData.map(d=>d.hedef_ciro),
+            type:'line',
+            borderColor:'#1A52A8',
+            backgroundColor:'rgba(26,82,168,.07)',
+            pointBackgroundColor:'#1A52A8',
+            pointRadius:4,
+            tension:.35,
+            fill:true,
+            borderDash:[5,3],
+            order:1,
+          },
+          {
+            label:'Bekleyen Alacak (₺)',
+            data:chartData.map(d=>d.bekleyen_alacak),
+            type:'line',
+            borderColor:'#C46A00',
+            backgroundColor:'rgba(196,106,0,.08)',
+            pointBackgroundColor:'#C46A00',
+            pointRadius:4,
+            tension:.35,
+            fill:false,
+            order:2,
+          },
+          {
+            label:'Kişisel Giderler (₺)',
+            data:chartData.map(d=>d.giderler),
+            backgroundColor:'rgba(181,38,30,.6)',
+            borderRadius:5,
+            order:4,
+          },
+        ],
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{position:'top',labels:{font:{family:"'Plus Jakarta Sans',sans-serif",size:11},usePointStyle:true,padding:16}},
+          tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${parseFloat(ctx.parsed.y).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺`}},
+        },
+        scales:{
+          x:{grid:{display:false},ticks:{font:{size:11}}},
+          y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11},callback:v=>v.toLocaleString('tr-TR')+' ₺'}},
+        },
+      },
+    });
+    return()=>{if(chartInstance.current)chartInstance.current.destroy();};
+  },[chartData]);
+
+  // Tür filtresine göre ödemeler
+  useEffect(()=>{
+    if(!typeFilter){setFilteredPayments(null);return;}
+    api(`/payments?status=pending&payment_type=${typeFilter}`).then(ps=>{
+      setFilteredPayments(ps.slice(0,15));
+    }).catch(console.error);
+  },[typeFilter]);
+
+  if(!stats)return <div className="empty"><span className="spinner spinner-dark"/></div>;
+  const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('tr-TR',{day:'2-digit',month:'short'});
+  const fmtAmt=a=>a?parseFloat(a).toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺':'—';
+
+  const TYPE_FILTERS=[
+    {key:'',label:'Tümü'},
+    {key:'kdv',label:'KDV'},
+    {key:'muhasebe_ucreti',label:'Muhasebe'},
+    {key:'sgk',label:'SGK'},
+    {key:'stopaj',label:'Stopaj'},
+    {key:'gelir_vergisi',label:'Gelir Vergisi'},
+    {key:'gecici_vergi',label:'Geçici Vergi'},
+    {key:'damga_vergisi',label:'Damga'},
+  ];
+
+  const displayPayments=typeFilter?(filteredPayments||[]):stats.upcoming_3days;
+
+  return(
+    <>
+      <div className="stats-grid">
+        <div className="stat"><div className="stat-label">Toplam Müşteri</div><div className="stat-value">{stats.total_clients}</div><div className="stat-sub">{stats.active_clients} aktif</div></div>
+        <div className="stat warn"><div className="stat-label">Bekleyen Ödeme</div><div className="stat-value">{stats.pending_payments}</div><div className="stat-sub">işlem bekliyor</div></div>
+        <div className="stat danger"><div className="stat-label">Gecikmiş</div><div className="stat-value">{stats.overdue_payments}</div><div className="stat-sub">ödeme gecikmiş</div></div>
+        <div className="stat wa"><div className="stat-label">Bu Ay WA Mesaj</div><div className="stat-value">{stats.whatsapp_sent_this_month}</div><div className="stat-sub">gönderildi</div></div>
+        <div className="stat danger"><div className="stat-label">Toplam Bakiye</div><div className="stat-value" style={{fontSize:22}}>{parseFloat(stats.total_balance||0).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</div><div className="stat-sub">birikmiş muhasebe ücreti</div></div>
+      </div>
+
+      {/* Gelir/Gider Grafiği */}
+      <div className="card" style={{marginBottom:18}}>
+        <div className="card-header">
+          <span className="card-title">📈 Son 12 Ay — Gelir & Alacak Trendi</span>
+          <span className="badge badge-gray">Chart.js</span>
+        </div>
+        <div className="card-body">
+          <div className="chart-container">
+            <canvas ref={chartRef}/>
+          </div>
+          {!chartData&&<div className="empty" style={{padding:20}}><span className="spinner spinner-dark"/></div>}
+        </div>
+      </div>
+
+      {/* Hızlı Tür Filtreleme */}
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">{typeFilter?`${PT_MAP[typeFilter]?.label||typeFilter} Ödemeleri`:'Önümüzdeki 3 Gün'}</span>
+          <div className="filter-chips">
+            {TYPE_FILTERS.map(f=>(
+              <button key={f.key} className={`chip ${typeFilter===f.key?'active':''}`} onClick={()=>setTypeFilter(f.key)}>{f.label}</button>
+            ))}
+          </div>
+        </div>
+        {displayPayments.length===0?<div className="card-body"><div className="empty"><div className="empty-icon">✅</div><p>{typeFilter?'Bu türde bekleyen ödeme yok':'Yaklaşan ödeme yok'}</p></div></div>:(
+          <div className="table-wrap"><table>
+            <thead><tr><th>Tarih</th><th>Müşteri</th><th>Başlık</th><th>Tür</th><th>Tutar</th></tr></thead>
+            <tbody>{displayPayments.map(p=>(
+              <tr key={p.id}>
+                <td><span className="badge badge-amber">{fmtDate(p.due_date)}</span></td>
+                <td className="fw-600">{p.client_name||<span className="text-muted">Kişisel</span>}</td>
+                <td>{p.title}</td><td><TypeBadge type={p.payment_type}/></td>
+                <td className="fw-600">{fmtAmt(p.amount)}</td>
+              </tr>
+            ))}</tbody>
+          </table></div>
+        )}
+      </div>
+    </>
+  );
+}
+
+function Clients({onSendWa,toastFn}){
+  const [clients,setClients]=useState([]);
+  const [modal,setModal]=useState(null);
+  const [detailClient,setDetailClient]=useState(null);
+  const [search,setSearch]=useState('');
+  const [waSentIds,setWaSentIds]=useState(new Set());
+  const load=()=>api('/clients').then(setClients).catch(console.error);
+  useEffect(()=>{load();},[]);
+  const del=async(c)=>{if(!confirm(`"${c.full_name}" pasife alınacak. Devam?`))return;await api(`/clients/${c.id}`,{method:'DELETE'});toastFn('Pasife alındı.');load();};
+  const save=async(form)=>{
+    if(form.id)await api(`/clients/${form.id}`,{method:'PUT',body:form});
+    else await api('/clients',{method:'POST',body:form});
+    toastFn('Kaydedildi.');setModal(null);load();
+  };
+  const carryBalance=async(c)=>{
+    if(!confirm(`"${c.full_name}" için ${parseFloat(c.monthly_fee).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺ muhasebe ücreti ödenmedi olarak işaretlenecek ve bakiyeye eklenecek. Devam?`))return;
+    try{
+      const r=await api(`/clients/${c.id}/carry-balance`,{method:'POST'});
+      toastFn(`Bakiyeye eklendi. Toplam: ${parseFloat(r.balance).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺`,'wa');
+      load();
+    }catch(e){toastFn(e.message,'error');}
+  };
+  const clearBalance=async(c)=>{
+    if(!confirm(`"${c.full_name}" için ${parseFloat(c.balance).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺ bakiye sıfırlanacak. Ödeme alındı mı?`))return;
+    await api(`/clients/${c.id}/clear-balance`,{method:'POST'});
+    toastFn('Bakiye sıfırlandı ✓');load();
+  };
+  const handleWa=(c)=>{
+    onSendWa(c);
+    setWaSentIds(prev=>new Set([...prev,c.id]));
+  };
+  const filtered=clients.filter(c=>c.full_name.toLowerCase().includes(search.toLowerCase())||c.phone.includes(search)||(c.tax_number||'').includes(search));
+  return(
+    <>
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Müşteriler</span>
+          <div style={{display:'flex',gap:10,alignItems:'center'}}>
+            <input className="form-control" style={{width:220}} placeholder="İsim, telefon, vergi no..." value={search} onChange={e=>setSearch(e.target.value)}/>
+            <button className="btn btn-primary btn-sm" onClick={()=>setModal({})}><Ico n="plus" s={13}/> Yeni Müşteri</button>
+          </div>
+        </div>
+        <div className="table-wrap" style={{maxHeight:500,overflowY:'auto'}}><table>
+          <thead className="sticky-thead"><tr><th>Ad Soyad</th><th>Telefon</th><th>Vergi No</th><th>Aylık Ücret</th><th>Bakiye</th><th>Durum</th><th></th></tr></thead>
+          <tbody>
+            {filtered.length===0&&<tr><td colSpan={7}><div className="empty"><div className="empty-icon">👤</div><p>Müşteri bulunamadı</p></div></td></tr>}
+            {filtered.map(c=>{
+              const waAlreadySent=waSentIds.has(c.id);
+              return(
+                <tr key={c.id} className={waAlreadySent?'wa-sent-row':''}>
+                  <td>
+                    <button className="fw-600" style={{background:'none',border:'none',cursor:'pointer',color:'var(--blue)',textDecoration:'underline',fontSize:13,padding:0}} onClick={()=>setDetailClient(c)}>{c.full_name}</button>
+                    {waAlreadySent&&<span className="wa-sent-check">✓ WA gönderildi</span>}
+                  </td>
+                  <td style={{fontFamily:'monospace',fontSize:12}}>{c.phone}</td>
+                  <td style={{fontSize:12,color:'var(--ink3)'}}>{c.tax_number||'—'}</td>
+                  <td>{c.monthly_fee?parseFloat(c.monthly_fee).toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺':'—'}</td>
+                  <td>{parseFloat(c.balance||0)>0?<span className="badge badge-red">+{parseFloat(c.balance).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</span>:<span className="text-muted">—</span>}</td>
+                  <td>{c.is_active?<span className="badge badge-green">Aktif</span>:<span className="badge badge-gray">Pasif</span>}</td>
+                  <td><div style={{display:'flex',gap:6}}>
+                    <button className="btn btn-wa btn-sm" onClick={()=>handleWa(c)} title="WhatsApp Gönder" style={waAlreadySent?{opacity:.5}:{}}><span style={{display:'inline-flex',alignItems:'center',gap:5}}>{WA_SVG} WA</span></button>
+                    <button className="btn btn-ghost btn-sm" onClick={()=>setModal(c)}><Ico n="edit" s={12}/></button>
+                    {c.monthly_fee&&c.is_active&&<button className="btn btn-danger btn-sm" style={{background:'var(--amber2)',color:'var(--amber)',borderColor:'var(--amber)'}} onClick={()=>carryBalance(c)} title="Ödeme yapılmadı — sonraki aya devret">Devret</button>}
+                    {parseFloat(c.balance||0)>0&&<button className="btn btn-ghost btn-sm" style={{color:'var(--green)'}} onClick={()=>clearBalance(c)} title="Bakiyeyi sıfırla (ödedi)">Ödedi ✓</button>}
+                    {c.is_active&&<button className="btn btn-danger btn-sm" onClick={()=>del(c)}><Ico n="trash" s={12}/></button>}
+                  </div></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table></div>
+      </div>
+      {modal!==null&&<ClientModal data={modal} onSave={save} onClose={()=>setModal(null)}/>}
+      {detailClient&&<ClientDetailModal client={detailClient} onClose={()=>{setDetailClient(null);load();}} toastFn={toastFn}/>}
+    </>
+  );
+}
+
+function ClientDetailModal({client,onClose,toastFn}){
+  const [tab,setTab]=useState('transactions');
+  const [transactions,setTransactions]=useState([]);
+  const [documents,setDocuments]=useState([]);
+  const [txForm,setTxForm]=useState({tx_type:'debit',amount:'',description:'',tx_date:new Date().toISOString().split('T')[0]});
+  const [docForm,setDocForm]=useState({doc_name:'',file_path:'',expiry_date:'',notes:''});
+  const [loading,setLoading]=useState(false);
+
+  const loadTx=()=>api(`/clients/${client.id}/transactions`).then(setTransactions).catch(console.error);
+  const loadDocs=()=>api(`/clients/${client.id}/documents`).then(setDocuments).catch(console.error);
+  useEffect(()=>{loadTx();loadDocs();},[]);
+
+  const addTx=async()=>{
+    if(!txForm.amount){toastFn('Tutar girin.','error');return;}
+    setLoading(true);
+    try{await api(`/clients/${client.id}/transactions`,{method:'POST',body:txForm});toastFn('Hareket eklendi.');setTxForm(f=>({...f,amount:'',description:''}));loadTx();}
+    catch(e){toastFn(e.message,'error');}finally{setLoading(false);}
+  };
+  const addDoc=async()=>{
+    if(!docForm.doc_name){toastFn('Evrak adı girin.','error');return;}
+    setLoading(true);
+    try{await api(`/clients/${client.id}/documents`,{method:'POST',body:docForm});toastFn('Evrak eklendi.');setDocForm({doc_name:'',file_path:'',expiry_date:'',notes:''});loadDocs();}
+    catch(e){toastFn(e.message,'error');}finally{setLoading(false);}
+  };
+  const delDoc=async(id)=>{if(!confirm('Evrak silinsin mi?'))return;await api(`/clients/${client.id}/documents/${id}`,{method:'DELETE'});toastFn('Silindi.');loadDocs();};
+
+  const fmtAmt=a=>parseFloat(a).toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺';
+  const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('tr-TR');
+  const today=new Date().toISOString().split('T')[0];
+
+  const expiryClass=(exp)=>{
+    if(!exp)return 'expiry-none';
+    const diff=(new Date(exp)-new Date())/(1000*60*60*24);
+    return diff<30?'expiry-warn':'expiry-ok';
+  };
+
+  return(
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal modal-lg" style={{maxWidth:760}}>
+        <div className="modal-header">
+          <span className="modal-title">👤 {client.full_name}</span>
+          <button className="btn-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <div className="tabs">
+            <button className={`tab-btn ${tab==='transactions'?'active':''}`} onClick={()=>setTab('transactions')}>📋 Müşteri Hareketleri</button>
+            <button className={`tab-btn ${tab==='documents'?'active':''}`} onClick={()=>setTab('documents')}>📁 Evraklar</button>
+          </div>
+
+          {tab==='transactions'&&(
+            <>
+              {/* Yeni hareket formu */}
+              <div style={{background:'var(--bg)',borderRadius:10,padding:'14px 16px',marginBottom:16}}>
+                <div style={{fontWeight:600,fontSize:12,color:'var(--ink3)',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:10}}>Yeni Hareket Ekle</div>
+                <div style={{display:'grid',gridTemplateColumns:'120px 1fr 1fr auto',gap:10,alignItems:'end'}}>
+                  <div>
+                    <div className="form-label">Tür</div>
+                    <select className="form-control" value={txForm.tx_type} onChange={e=>setTxForm(f=>({...f,tx_type:e.target.value}))}>
+                      <option value="debit">Borç (alacak)</option>
+                      <option value="credit">Tahsilat (ödedi)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div className="form-label">Tutar (₺)</div>
+                    <input className="form-control" type="number" value={txForm.amount} onChange={e=>setTxForm(f=>({...f,amount:e.target.value}))} placeholder="0.00"/>
+                  </div>
+                  <div>
+                    <div className="form-label">Açıklama</div>
+                    <input className="form-control" value={txForm.description} onChange={e=>setTxForm(f=>({...f,description:e.target.value}))} placeholder="İsteğe bağlı..."/>
+                  </div>
+                  <button className="btn btn-primary" onClick={addTx} disabled={loading}>{loading?<span className="spinner"/>:<Ico n="plus" s={13}/>} Ekle</button>
+                </div>
+                <div style={{marginTop:8}}>
+                  <div className="form-label">Tarih</div>
+                  <input className="form-control" type="date" style={{width:160}} value={txForm.tx_date} onChange={e=>setTxForm(f=>({...f,tx_date:e.target.value}))}/>
+                </div>
+              </div>
+              <div className="table-wrap" style={{maxHeight:320,overflowY:'auto'}}><table>
+                <thead className="sticky-thead"><tr><th>Tarih</th><th>Tür</th><th>Tutar</th><th>Açıklama</th></tr></thead>
+                <tbody>
+                  {transactions.length===0&&<tr><td colSpan={4}><div className="empty" style={{padding:24}}><div className="empty-icon">📋</div><p>Henüz hareket yok</p></div></td></tr>}
+                  {transactions.map(t=>(
+                    <tr key={t.id}>
+                      <td style={{fontSize:12}}>{fmtDate(t.tx_date)}</td>
+                      <td>{t.tx_type==='debit'?<span className="badge badge-red">📤 Borç</span>:<span className="badge badge-green">📥 Tahsilat</span>}</td>
+                      <td className="fw-600" style={{color:t.tx_type==='debit'?'var(--red)':'var(--green)'}}>{t.tx_type==='debit'?'+':'-'}{fmtAmt(t.amount)}</td>
+                      <td style={{fontSize:12,color:'var(--ink2)'}}>{t.description||'—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table></div>
+            </>
+          )}
+
+          {tab==='documents'&&(
+            <>
+              <div style={{background:'var(--bg)',borderRadius:10,padding:'14px 16px',marginBottom:16}}>
+                <div style={{fontWeight:600,fontSize:12,color:'var(--ink3)',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:10}}>Yeni Evrak Ekle</div>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                  <div><div className="form-label">Evrak Adı *</div><input className="form-control" value={docForm.doc_name} onChange={e=>setDocForm(f=>({...f,doc_name:e.target.value}))} placeholder="Vergi levhası, imza sirküleri..."/></div>
+                  <div><div className="form-label">Son Geçerlilik</div><input className="form-control" type="date" value={docForm.expiry_date} onChange={e=>setDocForm(f=>({...f,expiry_date:e.target.value}))}/></div>
+                  <div><div className="form-label">Dosya Yolu / URL</div><input className="form-control" value={docForm.file_path} onChange={e=>setDocForm(f=>({...f,file_path:e.target.value}))} placeholder="C:\Belgeler\... veya https://..."/></div>
+                  <div><div className="form-label">Not</div><input className="form-control" value={docForm.notes} onChange={e=>setDocForm(f=>({...f,notes:e.target.value}))} placeholder="İsteğe bağlı not..."/></div>
+                </div>
+                <div style={{marginTop:10}}><button className="btn btn-primary btn-sm" onClick={addDoc} disabled={loading}>{loading?<span className="spinner"/>:<Ico n="plus" s={13}/>} Evrak Ekle</button></div>
+              </div>
+              <div className="table-wrap" style={{maxHeight:300,overflowY:'auto'}}><table>
+                <thead className="sticky-thead"><tr><th>Evrak</th><th>Son Geçerlilik</th><th>Dosya</th><th>Not</th><th></th></tr></thead>
+                <tbody>
+                  {documents.length===0&&<tr><td colSpan={5}><div className="empty" style={{padding:24}}><div className="empty-icon">📁</div><p>Henüz evrak yok</p></div></td></tr>}
+                  {documents.map(d=>(
+                    <tr key={d.id}>
+                      <td className="fw-600">{d.doc_name}</td>
+                      <td>{d.expiry_date?<span className={`badge ${expiryClass(d.expiry_date)}`}>{fmtDate(d.expiry_date)}</span>:<span className="badge expiry-none">—</span>}</td>
+                      <td>{d.file_path?<span style={{fontSize:11,fontFamily:'monospace',color:'var(--blue)',maxWidth:160,overflow:'hidden',textOverflow:'ellipsis',display:'inline-block',whiteSpace:'nowrap'}} title={d.file_path}>{d.file_path}</span>:<span className="text-muted">—</span>}</td>
+                      <td style={{fontSize:12,color:'var(--ink3)'}}>{d.notes||'—'}</td>
+                      <td><button className="btn btn-danger btn-sm" onClick={()=>delDoc(d.id)}><Ico n="trash" s={12}/></button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table></div>
+            </>
+          )}
+        </div>
+        <div className="modal-footer"><button className="btn btn-ghost" onClick={onClose}>Kapat</button></div>
+      </div>
+    </div>
+  );
+}
+
+function ClientModal({data,onSave,onClose}){
+  const [form,setForm]=useState({full_name:'',phone:'',email:'',tax_number:'',tax_type:'',monthly_fee:'',fee_due_day:5,notes:'',...data});
+  const [err,setErr]=useState('');
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const submit=async()=>{
+    setErr('');
+    if(!form.full_name){setErr('Ad Soyad zorunlu.');return;}
+    if(!form.phone){setErr('Telefon zorunlu.');return;}
+    try{await onSave(form);}catch(e){setErr(e.message);}
+  };
+  return(
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-header"><span className="modal-title">{form.id?'Müşteriyi Düzenle':'Yeni Müşteri'}</span><button className="btn-close" onClick={onClose}>×</button></div>
+        <div className="modal-body">
+          {err&&<div className="alert alert-error">{err}</div>}
+          <div className="form-row c2">
+            <div className="form-group"><label className="form-label">Ad Soyad *</label><input className="form-control" value={form.full_name} onChange={e=>set('full_name',e.target.value)}/></div>
+            <div className="form-group"><label className="form-label">Telefon * <span style={{fontSize:10,fontWeight:400,color:'var(--ink3)'}}>WhatsApp için</span></label><input className="form-control" value={form.phone} onChange={e=>set('phone',e.target.value)} placeholder="0532 000 0000"/></div>
+          </div>
+          <div className="form-row c2">
+            <div className="form-group"><label className="form-label">E-posta</label><input className="form-control" value={form.email||''} onChange={e=>set('email',e.target.value)}/></div>
+            <div className="form-group"><label className="form-label">Vergi No</label><input className="form-control" value={form.tax_number||''} onChange={e=>set('tax_number',e.target.value)}/></div>
+          </div>
+          <div className="form-row c2">
+            <div className="form-group"><label className="form-label">Aylık Ücret (₺)</label><input className="form-control" type="number" value={form.monthly_fee||''} onChange={e=>set('monthly_fee',e.target.value)}/></div>
+            <div className="form-group"><label className="form-label">Ücret Son Günü</label><input className="form-control" type="number" min="1" max="31" value={form.fee_due_day} onChange={e=>set('fee_due_day',parseInt(e.target.value))}/></div>
+          </div>
+          <div className="form-group"><label className="form-label">Notlar</label><textarea className="form-control" rows={3} value={form.notes||''} onChange={e=>set('notes',e.target.value)}/></div>
+        </div>
+        <div className="modal-footer"><button className="btn btn-ghost" onClick={onClose}>İptal</button><button className="btn btn-primary" onClick={submit}><Ico n="check" s={13}/> Kaydet</button></div>
+      </div>
+    </div>
+  );
+}
+
+function Payments({onSendWa,toastFn}){
+  const [payments,setPayments]=useState([]);
+  const [modal,setModal]=useState(null);
+  const [filter,setFilter]=useState('pending');
+  const [typeFilter,setTypeFilter]=useState('');
+  const [waSentIds,setWaSentIds]=useState(new Set());
+  const [selIds,setSelIds]=useState(new Set());
+  const [bulkLoading,setBulkLoading]=useState(false);
+  const [bulkResult,setBulkResult]=useState(null);
+  const nowY=new Date().getFullYear(),nowM=new Date().getMonth()+1;
+  const [monthFilter,setMonthFilter]=useState(`${nowY}-${String(nowM).padStart(2,'0')}`);
+  const monthOptions=(()=>{const opts=[];for(let i=-3;i<=6;i++){const d=new Date(nowY,nowM-1+i,1);const y=d.getFullYear(),m=d.getMonth()+1;opts.push({value:`${y}-${String(m).padStart(2,'0')}`,label:d.toLocaleDateString('tr-TR',{month:'long',year:'numeric'})});}return opts;})();
+  const load=()=>{
+    const qs=new URLSearchParams();
+    if(filter)qs.set('status',filter);
+    if(typeFilter)qs.set('payment_type',typeFilter);
+    if(monthFilter){const[y,m]=monthFilter.split('-');const last=new Date(y,m,0).getDate();qs.set('date_from',`${monthFilter}-01`);qs.set('date_to',`${monthFilter}-${last}`);}
+    api(`/payments?${qs.toString()}`).then(ps=>{setPayments(ps);setSelIds(new Set());}).catch(console.error);
+  };
+  useEffect(()=>{load();},[filter,typeFilter,monthFilter]);
+  const toggleSel=(id)=>setSelIds(prev=>{const n=new Set(prev);n.has(id)?n.delete(id):n.add(id);return n;});
+  const toggleAll=()=>setSelIds(prev=>prev.size===payments.filter(p=>p.client_id&&p.status!=='paid').length?new Set():new Set(payments.filter(p=>p.client_id&&p.status!=='paid').map(p=>p.id)));
+  const sendable=payments.filter(p=>p.client_id&&p.status!=='paid');
+  const bulkSend=async()=>{
+    if(!selIds.size){return;}
+    setBulkLoading(true);setBulkResult(null);
+    try{
+      const r=await api('/whatsapp/bulk-send',{method:'POST',body:{payment_ids:[...selIds]}});
+      setBulkResult(r);
+      if(r.ok>0)setWaSentIds(prev=>{const n=new Set(prev);[...selIds].forEach(id=>n.add(id));return n;});
+    }catch(e){setBulkResult({error:e.message});}
+    finally{setBulkLoading(false);}
+  };
+  const markPaid=async(id)=>{await api(`/payments/${id}/mark-paid`,{method:'POST'});toastFn('Ödeme tamamlandı ✓');load();};
+  const del=async(id)=>{if(!confirm('Ödemeyi sil?'))return;await api(`/payments/${id}`,{method:'DELETE'});toastFn('Silindi.');load();};
+  const save=async(form)=>{
+    if(form.id)await api(`/payments/${form.id}`,{method:'PUT',body:form});
+    else await api('/payments',{method:'POST',body:form});
+    toastFn('Kaydedildi.');setModal(null);load();
+  };
+  const handleWa=(client,payment)=>{
+    onSendWa(client,payment);
+    setWaSentIds(prev=>new Set([...prev,payment.id]));
+  };
+  const exportLuca=()=>{
+    const qs=new URLSearchParams();
+    if(filter)qs.set('status',filter);
+    if(typeFilter)qs.set('payment_type',typeFilter);
+    if(monthFilter){const[y,m]=monthFilter.split('-');const last=new Date(y,m,0).getDate();qs.set('date_from',`${monthFilter}-01`);qs.set('date_to',`${monthFilter}-${last}`);}
+    window.open(`/api/luca/export?${qs.toString()}`,'_blank');
+    toastFn('📊 Luca Excel dosyası indiriliyor...');
+  };
+  const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('tr-TR');
+  const fmtAmt=a=>a?parseFloat(a).toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺':'—';
+  const today=new Date().toISOString().split('T')[0];
+
+  const TYPE_CHIPS=[
+    {key:'',label:'Tümü'},
+    {key:'kdv',label:'KDV'},
+    {key:'muhasebe_ucreti',label:'Muhasebe'},
+    {key:'sgk',label:'SGK'},
+    {key:'stopaj',label:'Stopaj'},
+    {key:'gelir_vergisi',label:'Gelir V.'},
+    {key:'gecici_vergi',label:'Geçici V.'},
+    {key:'damga_vergisi',label:'Damga'},
+    {key:'motorlu_tasit_vergisi',label:'MTV'},
+    {key:'otv',label:'ÖTV'},
+  ];
+
+  return(
+    <>
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Ödemeler</span>
+          <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+            <select className="form-control" style={{width:155}} value={monthFilter} onChange={e=>setMonthFilter(e.target.value)}>
+              {monthOptions.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+            <select className="form-control" style={{width:125}} value={filter} onChange={e=>setFilter(e.target.value)}>
+              <option value="">Tüm Durumlar</option><option value="pending">Bekleyen</option>
+              <option value="paid">Ödendi</option><option value="overdue">Gecikmiş</option>
+            </select>
+            {selIds.size>0&&(
+              <button className="btn btn-wa btn-sm" onClick={bulkSend} disabled={bulkLoading}>
+                {bulkLoading?<span className="spinner"/>:WA_SVG} Toplu Gönder ({selIds.size})
+              </button>
+            )}
+            <button className="btn btn-excel btn-sm" onClick={exportLuca} title="Luca Excel Fiş Aktarımı">
+              📊 Luca'ya Aktar
+            </button>
+            <button className="btn btn-primary btn-sm" onClick={()=>setModal({})}><Ico n="plus" s={13}/> Yeni Ödeme</button>
+          </div>
+        </div>
+        {bulkResult&&(
+          <div className={`alert ${bulkResult.error?'alert-error':'alert-info'}`} style={{margin:'8px 16px',fontSize:13}}>
+            {bulkResult.error?bulkResult.error:`Gönderildi: ${bulkResult.ok} ✓  |  Hata: ${bulkResult.error_count||0}  |  Atlandı: ${bulkResult.skip||0}`}
+            <button style={{float:'right',background:'none',border:'none',cursor:'pointer',fontWeight:700}} onClick={()=>setBulkResult(null)}>×</button>
+          </div>
+        )}
+        <div style={{padding:'10px 16px',borderBottom:'1px solid var(--border)',background:'var(--bg)'}}>
+          <div className="filter-chips">
+            {TYPE_CHIPS.map(c=>(
+              <button key={c.key} className={`chip ${typeFilter===c.key?'active':''}`} onClick={()=>setTypeFilter(c.key)}>{c.label}</button>
+            ))}
+            {sendable.length>0&&(
+              <button className={`chip ${selIds.size===sendable.length?'active':''}`} style={{marginLeft:'auto',fontSize:11}} onClick={toggleAll}>
+                {selIds.size===sendable.length?'☑ Seçimi Kaldır':'☐ Tümünü Seç'}
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="table-wrap" style={{maxHeight:520,overflowY:'auto'}}><table>
+          <thead className="sticky-thead"><tr><th style={{width:32}}></th><th>Son Tarih</th><th>Müşteri</th><th>Başlık</th><th>Tür</th><th>Tutar</th><th>Durum</th><th></th></tr></thead>
+          <tbody>
+            {payments.length===0&&<tr><td colSpan={7}><div className="empty"><div className="empty-icon">💳</div><p>Ödeme bulunamadı</p></div></td></tr>}
+            {payments.map(p=>{
+              const overdue=p.status==='pending'&&p.due_date<today;
+              const waAlreadySent=waSentIds.has(p.id);
+              return(
+                <tr key={p.id} className={waAlreadySent?'wa-sent-row':''}>
+                  <td>{p.client_id&&p.status!=='paid'&&<input type="checkbox" checked={selIds.has(p.id)} onChange={()=>toggleSel(p.id)} style={{cursor:'pointer'}}/>}</td>
+                  <td><span className={`badge ${overdue?'badge-red':p.status==='paid'?'badge-green':'badge-amber'}`}>{fmtDate(p.due_date)}</span></td>
+                  <td className="fw-600">{p.client_name||<span className="text-muted">Kişisel</span>}</td>
+                  <td>{p.title}{waAlreadySent&&<span className="wa-sent-check">✓ WA</span>}</td>
+                  <td><TypeBadge type={p.payment_type}/></td>
+                  <td className="fw-600">{fmtAmt(p.amount)}</td>
+                  <td>{p.status==='paid'?<span className="badge badge-green">✓ Ödendi</span>:overdue?<span className="badge badge-red">Gecikmiş</span>:<span className="badge badge-amber">Bekliyor</span>}</td>
+                  <td><div style={{display:'flex',gap:5}}>
+                    {p.status!=='paid'&&p.client_id&&<button className="btn btn-wa btn-sm" onClick={()=>handleWa({id:p.client_id,full_name:p.client_name,phone:p.client_phone},p)} title="WhatsApp" style={waAlreadySent?{opacity:.5}:{}}>{WA_SVG}{waAlreadySent&&' ✓'}</button>}
+                    {p.status!=='paid'&&<button className="btn btn-ghost btn-sm" onClick={()=>markPaid(p.id)} title="Ödendi"><Ico n="check" s={12}/></button>}
+                    <button className="btn btn-danger btn-sm" onClick={()=>del(p.id)}><Ico n="trash" s={12}/></button>
+                  </div></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table></div>
+      </div>
+      {modal!==null&&<PaymentModal data={modal} onSave={save} onClose={()=>setModal(null)}/>}
+    </>
+  );
+}
+
+function PaymentModal({data,onSave,onClose}){
+  const [clients,setClients]=useState([]);
+  const [form,setForm]=useState({title:'',payment_type:'kdv',amount:'',due_date:'',client_id:'',is_personal:false,recurrence:'',...data});
+  const [err,setErr]=useState('');
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  useEffect(()=>{api('/clients?active_only=true').then(setClients).catch(console.error);},[]);
+  const submit=async()=>{
+    setErr('');
+    if(!form.title){setErr('Başlık zorunlu.');return;}
+    if(!form.due_date){setErr('Son tarih zorunlu.');return;}
+    const body={...form,amount:form.amount?parseFloat(form.amount):null,client_id:form.client_id||null};
+    try{await onSave(body);}catch(e){setErr(e.message);}
+  };
+  return(
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-header"><span className="modal-title">{form.id?'Ödemeyi Düzenle':'Yeni Ödeme'}</span><button className="btn-close" onClick={onClose}>×</button></div>
+        <div className="modal-body">
+          {err&&<div className="alert alert-error">{err}</div>}
+          <div className="form-group"><label className="form-label">Başlık *</label><input className="form-control" value={form.title} onChange={e=>set('title',e.target.value)}/></div>
+          <div className="form-row c2">
+            <div className="form-group"><label className="form-label">Tür</label>
+              <select className="form-control" value={form.payment_type} onChange={e=>set('payment_type',e.target.value)}>
+                {Object.entries(PT_MAP).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}
+              </select>
+            </div>
+            <div className="form-group"><label className="form-label">Tutar (₺)</label><input className="form-control" type="number" value={form.amount||''} onChange={e=>set('amount',e.target.value)}/></div>
+          </div>
+          <div className="form-row c2">
+            <div className="form-group"><label className="form-label">Son Tarih *</label><input className="form-control" type="date" value={form.due_date} onChange={e=>set('due_date',e.target.value)}/></div>
+            <div className="form-group"><label className="form-label">Tekrar</label>
+              <select className="form-control" value={form.recurrence||''} onChange={e=>set('recurrence',e.target.value)}>
+                <option value="">Yok</option><option value="monthly">Aylık</option><option value="yearly">Yıllık</option>
+              </select>
+            </div>
+          </div>
+          <div className="form-group"><label className="form-label">Müşteri</label>
+            <select className="form-control" value={form.client_id||''} onChange={e=>set('client_id',e.target.value)}>
+              <option value="">— Kişisel ödeme —</option>
+              {clients.map(c=><option key={c.id} value={c.id}>{c.full_name}</option>)}
+            </select>
+          </div>
+          <div className="form-group"><label className="checkbox-label"><input type="checkbox" checked={form.is_personal} onChange={e=>set('is_personal',e.target.checked)}/> Kişisel ödeme</label></div>
+        </div>
+        <div className="modal-footer"><button className="btn btn-ghost" onClick={onClose}>İptal</button><button className="btn btn-primary" onClick={submit}><Ico n="check" s={13}/> Kaydet</button></div>
+      </div>
+    </div>
+  );
+}
+
+function CalendarView({onSendWa,toastFn}){
+  const calRef=useRef(null);
+  const calInstanceRef=useRef(null);
+  const [dayModal,setDayModal]=useState(null);
+  const [allCustomEvents,setAllCustomEvents]=useState([]);
+  // Filtreler — state (render için) + ref (FullCalendar callback closure için)
+  const [filters,setFilters]=useState({personal:true,clients:true,tax:true});
+  const filtersRef=useRef({personal:true,clients:true,tax:true});
+  const toggleFilter=(k)=>{
+    const next={...filtersRef.current,[k]:!filtersRef.current[k]};
+    filtersRef.current=next;
+    setFilters({...next});
+    // Takvimi yeniden çek — takvim destroy olmadan güncellenir
+    calInstanceRef.current?.refetchEvents();
+  };
+
+  const loadCustomEvents=()=>api('/events').then(setAllCustomEvents).catch(console.error);
+  useEffect(()=>{loadCustomEvents();},[]);
+
+  useEffect(()=>{
+    if(!calRef.current)return;
+    const cal=new FullCalendar.Calendar(calRef.current,{
+      locale:'tr',
+      headerToolbar:{left:'prev,next today',center:'title',right:'dayGridMonth,timeGridWeek'},
+      height:'100%',
+      events:async(info,ok,fail)=>{
+        try{
+          const f=filtersRef.current; // Her zaman güncel değeri okur
+          const start=info.startStr.split('T')[0];
+          const end=info.endStr.split('T')[0];
+          const [payments,custom,taxData]=await Promise.all([
+            api(`/payments/calendar/events?start=${start}&end=${end}`),
+            api('/events'),
+            api(`/tax-calendar/year-overview`),
+          ]);
+          setAllCustomEvents(custom);
+          const evs=[];
+          // Kişisel ödemeler
+          if(f.personal){
+            payments.filter(p=>p.is_personal||!p.client_id).forEach(p=>{
+              evs.push({id:'p_'+p.id,title:'🏠 '+p.title,start:p.due_date,backgroundColor:p.status==='paid'?'#1C5C34':p.status==='overdue'?'#B5261E':'#7C6FAF',borderColor:'transparent',extendedProps:{type:'payment',category:'personal',...p}});
+            });
+          }
+          // Müşteri ödemeleri
+          if(f.clients){
+            payments.filter(p=>p.client_id&&!p.is_personal).forEach(p=>{
+              evs.push({id:'p_'+p.id,title:(p.client_name?p.client_name+' — ':'')+p.title,start:p.due_date,backgroundColor:p.status==='paid'?'#1C5C34':p.status==='overdue'?'#B5261E':'#C46A00',borderColor:'transparent',extendedProps:{type:'payment',category:'client',...p}});
+            });
+          }
+          // Özel etkinlikler (kişisel kategorisinde)
+          if(f.personal){
+            custom.forEach(e=>{
+              evs.push({id:'e_'+e.id,title:e.title,start:e.date,backgroundColor:e.color||'#1A52A8',borderColor:'transparent',extendedProps:{type:'event',category:'personal',...e}});
+            });
+          }
+          // Vergi takvimi etkinlikleri
+          if(f.tax){
+            const rangeStart=new Date(start+'T00:00:00');
+            const rangeEnd=new Date(end+'T00:00:00');
+            taxData.events.forEach(te=>{
+              const d=new Date(te.due_date+'T00:00:00');
+              if(d>=rangeStart&&d<=rangeEnd){
+                evs.push({id:'tax_'+te.due_date+'_'+te.payment_type,title:'🏛 '+te.name,start:te.due_date,backgroundColor:'#0F4C75',borderColor:'transparent',extendedProps:{type:'tax',category:'tax',...te}});
+              }
+            });
+          }
+          ok(evs);
+        }catch(err){fail(err);}
+      },
+      eventClick:(info)=>{
+        const p=info.event.extendedProps;
+        if(p.type==='payment'&&p.client_id)onSendWa({id:p.client_id,full_name:p.client_name,phone:p.client_phone},p);
+      },
+      dateClick:(info)=>{
+        const clickedDate=info.dateStr;
+        const calApi=calInstanceRef.current;
+        const dayEvents=calApi?calApi.getEvents().filter(e=>e.startStr===clickedDate||e.startStr.startsWith(clickedDate)):[];
+        setDayModal({date:clickedDate,events:dayEvents.map(e=>({id:e.id,title:e.title,color:e.backgroundColor,extendedProps:e.extendedProps}))});
+      },
+    });
+    cal.render();
+    calInstanceRef.current=cal;
+    return()=>cal.destroy();
+  },[]); // Sadece mount/unmount — filtreler ref üzerinden yönetilir
+
+  const refetch=()=>{
+    calInstanceRef.current?.refetchEvents();
+    loadCustomEvents();
+  };
+
+  return(
+    <>
+      {/* Filtre kutucukları */}
+      <div className="cal-filter-bar">
+        <span className="cal-filter-label">Göster:</span>
+        {[
+          {key:'personal',label:'🏠 Kişisel',color:'#7C6FAF'},
+          {key:'clients', label:'👥 Müşteriler',color:'#C46A00'},
+          {key:'tax',     label:'🏛 Vergi Takvimi',color:'#0F4C75'},
+        ].map(f=>(
+          <label key={f.key} className={`cal-filter-chip ${filters[f.key]?'on':''}`} style={filters[f.key]?{borderColor:f.color,background:f.color+'18',color:f.color}:{}}>
+            <input type="checkbox" checked={filters[f.key]} onChange={()=>toggleFilter(f.key)} style={{display:'none'}}/>
+            <span className="cal-filter-dot" style={{background:filters[f.key]?f.color:'var(--border)'}}/>
+            {f.label}
+          </label>
+        ))}
+        {!filters.personal&&!filters.clients&&!filters.tax&&(
+          <span style={{fontSize:12,color:'var(--ink3)',marginLeft:4}}>⚠️ Hiçbir kategori seçili değil</span>
+        )}
+      </div>
+      <div className="card" style={{height:'calc(100vh - 200px)'}}>
+        <div className="card-body" style={{height:'100%',padding:16}}>
+          <div ref={calRef} style={{height:'100%'}}/>
+        </div>
+      </div>
+      <p className="cal-add-hint">💡 Herhangi bir güne tıklayarak etkinlik ekleyebilir veya o günün etkinliklerini görebilirsiniz.</p>
+      {dayModal&&<DayModal date={dayModal.date} events={dayModal.events} allCustomEvents={allCustomEvents} onClose={()=>setDayModal(null)} onRefetch={refetch} toastFn={toastFn} onSendWa={onSendWa}/>}
+    </>
+  );
+}
+
+function DayModal({date,events,allCustomEvents,onClose,onRefetch,toastFn,onSendWa}){
+  const [addForm,setAddForm]=useState({title:'',date:date||'',notes:'',color:'#3949AB'});
+  const [editingId,setEditingId]=useState(null);
+  const [editForm,setEditForm]=useState({});
+  const [err,setErr]=useState('');
+  const [loading,setLoading]=useState(false);
+
+  const fmtDate=(d)=>d?new Date(d+'T12:00:00').toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
+  const setA=(k,v)=>setAddForm(f=>({...f,[k]:v}));
+  const setE=(k,v)=>setEditForm(f=>({...f,[k]:v}));
+
+  const dayCustomEvents=allCustomEvents.filter(e=>e.date===date);
+  const dayPaymentEvents=events.filter(e=>e.extendedProps?.type==='payment');
+  const dayTaxEvents=events.filter(e=>e.extendedProps?.type==='tax');
+
+  const addEvent=async()=>{
+    if(!addForm.title){setErr('Başlık zorunlu.');return;}
+    setLoading(true);setErr('');
+    try{
+      await api('/events',{method:'POST',body:{...addForm,date:date}});
+      toastFn('Etkinlik eklendi ✓');
+      onRefetch();
+      setAddForm({title:'',date:date,notes:'',color:'#3949AB'});
+    }catch(e){setErr(e.message);}finally{setLoading(false);}
+  };
+
+  const startEdit=(ev)=>{
+    setEditingId(ev.id);
+    setEditForm({title:ev.title,date:ev.date,notes:ev.notes||'',color:ev.color||'#3949AB'});
+  };
+
+  const saveEdit=async(id)=>{
+    setLoading(true);setErr('');
+    try{
+      await api(`/events/${id}`,{method:'PUT',body:editForm});
+      toastFn('Etkinlik güncellendi ✓');
+      onRefetch();
+      setEditingId(null);
+    }catch(e){setErr(e.message);}finally{setLoading(false);}
+  };
+
+  const delEvent=async(id)=>{
+    if(!confirm('Bu etkinliği silmek istediğinizden emin misiniz?'))return;
+    setLoading(true);
+    try{
+      await api(`/events/${id}`,{method:'DELETE'});
+      toastFn('Etkinlik silindi.');
+      onRefetch();
+    }catch(e){toastFn(e.message,'error');}finally{setLoading(false);}
+  };
+
+  return(
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal modal-lg">
+        <div className="modal-header">
+          <span className="modal-title">📅 {fmtDate(date)}</span>
+          <button className="btn-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body" style={{maxHeight:'70vh',overflowY:'auto'}}>
+          {err&&<div className="alert alert-error">{err}</div>}
+
+          {/* O günkü etkinlikler */}
+          {(dayCustomEvents.length>0||dayPaymentEvents.length>0||dayTaxEvents.length>0)&&(
+            <div style={{marginBottom:20}}>
+              <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.6px',color:'var(--ink3)',marginBottom:10}}>Bu Gündeki Etkinlikler</div>
+
+              {/* Vergi takvimi */}
+              {dayTaxEvents.map(ev=>(
+                <div key={ev.id} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 12px',background:'#EBF5FF',borderRadius:8,marginBottom:6,border:'1px solid #BDD7EE'}}>
+                  <span style={{width:10,height:10,borderRadius:'50%',background:'#0F4C75',flexShrink:0}}/>
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:600,fontSize:13}}>{ev.extendedProps?.name||ev.title}</div>
+                    {ev.extendedProps?.description&&<div style={{fontSize:11,color:'var(--ink3)',marginTop:2}}>{ev.extendedProps.description}</div>}
+                  </div>
+                  <span style={{fontSize:10,background:'#0F4C75',color:'#fff',padding:'2px 7px',borderRadius:10}}>Vergi</span>
+                </div>
+              ))}
+
+              {/* Ödeme etkinlikleri */}
+              {dayPaymentEvents.map(ev=>{
+                const p=ev.extendedProps;
+                return(
+                  <div key={ev.id} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 12px',background:'var(--amber2)',borderRadius:8,marginBottom:6,border:'1px solid #FFD9A0'}}>
+                    <span style={{width:10,height:10,borderRadius:'50%',background:ev.color,flexShrink:0}}/>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:600,fontSize:13}}>{p.client_name&&<span style={{color:'var(--amber)'}}>{p.client_name} — </span>}{p.title}</div>
+                      {p.amount&&<div style={{fontSize:11,color:'var(--ink3)',marginTop:2}}>{parseFloat(p.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</div>}
+                    </div>
+                    {p.client_id&&<button className="btn btn-wa btn-sm" onClick={()=>{onClose();onSendWa({id:p.client_id,full_name:p.client_name,phone:p.client_phone},p);}}>{WA_SVG}</button>}
+                  </div>
+                );
+              })}
+
+              {/* Özel etkinlikler */}
+              {dayCustomEvents.map(ev=>(
+                <div key={ev.id} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 12px',background:'var(--bg2)',borderRadius:8,marginBottom:6,border:'1px solid var(--border)'}}>
+                  <span style={{width:10,height:10,borderRadius:'50%',background:ev.color||'#3949AB',flexShrink:0}}/>
+                  {editingId===ev.id?(
+                    <div style={{flex:1,display:'grid',gridTemplateColumns:'1fr auto auto',gap:6,alignItems:'center'}}>
+                      <input className="form-control" style={{padding:'5px 8px',fontSize:12}} value={editForm.title} onChange={e=>setE('title',e.target.value)}/>
+                      <input type="color" value={editForm.color} onChange={e=>setE('color',e.target.value)} style={{width:30,height:28,padding:2,border:'1px solid var(--border)',borderRadius:5,cursor:'pointer'}}/>
+                      <div style={{display:'flex',gap:4}}>
+                        <button className="btn btn-primary btn-sm" onClick={()=>saveEdit(ev.id)} disabled={loading}><Ico n="check" s={11}/></button>
+                        <button className="btn btn-ghost btn-sm" onClick={()=>setEditingId(null)}>✕</button>
+                      </div>
+                    </div>
+                  ):(
+                    <>
+                      <div style={{flex:1}}>
+                        <div style={{fontWeight:600,fontSize:13}}>{ev.title}</div>
+                        {ev.notes&&<div style={{fontSize:11,color:'var(--ink3)',marginTop:2}}>{ev.notes}</div>}
+                      </div>
+                      <button className="btn btn-ghost btn-sm" onClick={()=>startEdit(ev)} title="Düzenle"><Ico n="edit" s={12}/></button>
+                      <button className="btn btn-danger btn-sm" onClick={()=>delEvent(ev.id)} title="Sil" disabled={loading}><Ico n="trash" s={12}/></button>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Yeni etkinlik ekleme */}
+          <div style={{borderTop:dayCustomEvents.length>0||dayPaymentEvents.length>0||dayTaxEvents.length>0?'1px solid var(--border)':'none',paddingTop:dayCustomEvents.length>0||dayPaymentEvents.length>0||dayTaxEvents.length>0?16:0}}>
+            <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.6px',color:'var(--ink3)',marginBottom:10}}>Yeni Etkinlik Ekle</div>
+            <div className="form-group"><label className="form-label">Başlık *</label><input className="form-control" value={addForm.title} onChange={e=>setA('title',e.target.value)} autoFocus placeholder="Etkinlik başlığı..."/></div>
+            <div className="form-row c2">
+              <div className="form-group"><label className="form-label">Renk</label><input className="form-control" type="color" value={addForm.color} onChange={e=>setA('color',e.target.value)} style={{height:40,padding:4}}/></div>
+            </div>
+            <div className="form-group"><label className="form-label">Not</label><textarea className="form-control" rows={2} value={addForm.notes} onChange={e=>setA('notes',e.target.value)} placeholder="İsteğe bağlı not..."/></div>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-ghost" onClick={onClose}>Kapat</button>
+          <button className="btn btn-primary" onClick={addEvent} disabled={loading||!addForm.title}>
+            {loading?<span className="spinner"/>:<Ico n="plus" s={13}/>} Etkinlik Ekle
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Templates({toastFn}){
+  const [templates,setTemplates]=useState([]);
+  const [editing,setEditing]=useState(null);
+  const [form,setForm]=useState({name:'',payment_type:'',body:'',is_default:false});
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const load=()=>api('/whatsapp/templates').then(setTemplates).catch(console.error);
+  useEffect(()=>{load();},[]);
+  const preview=form.body.replace(/\[isim\]/g,'Ahmet Yılmaz').replace(/\[tutar\]/g,'1.250,00').replace(/\[tarih\]/g,'25.04.2025').replace(/\[tür\]/g,form.payment_type||'ödeme');
+  const del=async(id)=>{if(!confirm('Taslağı sil?'))return;await api(`/whatsapp/templates/${id}`,{method:'DELETE'});load();toastFn('Silindi.');};
+  const startEdit=(t)=>{setEditing(t);setForm({name:t.name,payment_type:t.payment_type||'',body:t.body,is_default:t.is_default});};
+  const cancel=()=>{setEditing(null);setForm({name:'',payment_type:'',body:'',is_default:false});};
+  const save=async()=>{
+    if(!form.name||!form.body){toastFn('Ad ve mesaj zorunlu.','error');return;}
+    const body={...form,payment_type:form.payment_type||null};
+    if(editing)await api(`/whatsapp/templates/${editing.id}`,{method:'PUT',body});
+    else await api('/whatsapp/templates',{method:'POST',body});
+    toastFn(editing?'Güncellendi.':'Eklendi.');cancel();load();
+  };
+  return(
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,alignItems:'start'}}>
+      <div className="card">
+        <div className="card-header"><span className="card-title">WhatsApp Taslakları</span><span className="badge badge-gray">{templates.length}</span></div>
+        <div className="table-wrap"><table>
+          <thead><tr><th>Ad</th><th>Tür</th><th>Varsayılan</th><th></th></tr></thead>
+          <tbody>
+            {templates.length===0&&<tr><td colSpan={4}><div className="empty"><div className="empty-icon">📝</div><p>Taslak yok</p></div></td></tr>}
+            {templates.map(t=>(
+              <tr key={t.id}>
+                <td className="fw-600">{t.name}</td>
+                <td>{t.payment_type?<TypeBadge type={t.payment_type}/>:<span className="text-muted">—</span>}</td>
+                <td>{t.is_default?<span className="badge badge-wa">★ Varsayılan</span>:<span className="text-muted">—</span>}</td>
+                <td><div style={{display:'flex',gap:5}}>
+                  <button className="btn btn-ghost btn-sm" onClick={()=>startEdit(t)}><Ico n="edit" s={12}/></button>
+                  <button className="btn btn-danger btn-sm" onClick={()=>del(t.id)}><Ico n="trash" s={12}/></button>
+                </div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table></div>
+      </div>
+      <div className="card">
+        <div className="card-header"><span className="card-title">{editing?'Taslağı Düzenle':'Yeni Taslak'}</span></div>
+        <div className="card-body">
+          <div className="form-group"><label className="form-label">Taslak Adı</label><input className="form-control" value={form.name} onChange={e=>set('name',e.target.value)}/></div>
+          <div className="form-group"><label className="form-label">Ödeme Türü</label>
+            <select className="form-control" value={form.payment_type} onChange={e=>set('payment_type',e.target.value)}>
+              <option value="">— Genel —</option>
+              {Object.entries(PT_MAP).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Mesaj</label>
+            <textarea className="form-control" rows={5} value={form.body} onChange={e=>set('body',e.target.value)} placeholder="Sayın [isim], [tarih] tarihinde [tutar] TL [tür] ödemeniz bulunmaktadır."/>
+            <div className="char-count">{form.body.length} karakter • Değişkenler: [isim] [tarih] [tutar] [tür]</div>
+          </div>
+          <div className="form-group"><label className="checkbox-label"><input type="checkbox" checked={form.is_default} onChange={e=>set('is_default',e.target.checked)}/> Bu türün varsayılan taslağı</label></div>
+          {form.body&&<div className="form-group"><label className="form-label">Önizleme (WhatsApp)</label><div className="wa-preview-wrap"><div className="wa-preview-bubble">{preview}</div></div></div>}
+          <div style={{display:'flex',gap:10}}>
+            <button className="btn btn-primary" onClick={save}><Ico n="check" s={13}/> {editing?'Güncelle':'Ekle'}</button>
+            {editing&&<button className="btn btn-ghost" onClick={cancel}>İptal</button>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WhatsappModal({client,payment,onClose,toastFn}){
+  const [templates,setTemplates]=useState([]);
+  const [allClients,setAllClients]=useState([]);
+  const [tplId,setTplId]=useState('');
+  const [amount,setAmount]=useState(payment?.amount?String(payment.amount):'');
+  const [dueDate,setDueDate]=useState(payment?.due_date||'');
+  const [custom,setCustom]=useState('');
+  const [useCustom,setUseCustom]=useState(false);
+  const [clientSearch,setClientSearch]=useState('');
+  const [selClient,setSelClient]=useState(client||null);
+  const [loading,setLoading]=useState(false);
+  const [waData,setWaData]=useState(null);
+  const [err,setErr]=useState('');
+
+  useEffect(()=>{
+    api('/whatsapp/templates').then(ts=>{
+      setTemplates(ts);
+      if(payment?.payment_type){const def=ts.find(t=>t.payment_type===payment.payment_type&&t.is_default);if(def)setTplId(def.id);}
+    });
+    if(!client)api('/clients').then(cs=>setAllClients(cs.filter(c=>c.is_active)));
+  },[]);
+
+  const tpl=templates.find(t=>t.id===tplId);
+  const preview=tpl&&selClient?tpl.body
+    .replace(/\[isim\]/g,selClient.full_name)
+    .replace(/\[tutar\]/g,amount?parseFloat(amount).toLocaleString('tr-TR',{minimumFractionDigits:2}):'—')
+    .replace(/\[tarih\]/g,dueDate?new Date(dueDate+'T12:00:00').toLocaleDateString('tr-TR'):'—')
+    .replace(/\[tür\]/g,payment?PT_MAP[payment.payment_type]?.label||'':''):'';
+
+  const doGenerateLink=async()=>{
+    if(!selClient){setErr('Müşteri seçin.');return;}
+    if(!useCustom&&!tplId&&!custom){setErr('Taslak seçin veya mesaj yazın.');return;}
+    setLoading(true);setErr('');
+    try{
+      const body={client_id:selClient.id,...(useCustom?{custom_message:custom}:{template_id:tplId||undefined,amount:amount?parseFloat(amount):null,due_date:dueDate||null})};
+      const r=await api('/whatsapp/link',{method:'POST',body});
+      setWaData(r);
+    }catch(e){setErr(e.message);}finally{setLoading(false);}
+  };
+
+  const openWa=()=>{
+    if(waData?.wa_link){window.open(waData.wa_link,'_blank');toastFn('WhatsApp açıldı — mesajı gönderin! ✓','wa');setTimeout(onClose,800);}
+  };
+
+  const filteredClients=allClients.filter(c=>c.full_name.toLowerCase().includes(clientSearch.toLowerCase())||(c.phone&&c.phone.includes(clientSearch)));
+
+  return(
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal modal-lg">
+        <div className="modal-header">
+          <span className="modal-title" style={{display:'flex',alignItems:'center',gap:8}}>{WA_SVG} WhatsApp Mesajı Gönder</span>
+          <button className="btn-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          {waData?(
+            <>
+              <div className="alert alert-wa" style={{alignItems:'center'}}>
+                {WA_SVG} <span>Mesaj hazır! Butona basın, WhatsApp Web açılacak, mesaj yazılı gelecek. Sadece <b>Gönder</b> tuşuna basın.</span>
+              </div>
+              <div className="wa-phone-label">📱 {waData.client_name} — {waData.phone}</div>
+              <div className="wa-preview-wrap"><div className="wa-preview-bubble">{waData.message}</div></div>
+              <button className="wa-open-btn" onClick={openWa}>{WA_SVG} WhatsApp Web'de Aç &amp; Gönder</button>
+              <p className="wa-hint">WhatsApp Web açılacak — mesajı göndermeden önce düzenleyebilirsiniz.</p>
+            </>
+          ):(
+            <>
+              {!client?(
+                <div className="form-group">
+                  <label className="form-label">Alıcı Müşteri</label>
+                  <input className="form-control" placeholder="Müşteri ara..." value={clientSearch} onChange={e=>setClientSearch(e.target.value)}/>
+                  {clientSearch&&!selClient&&(
+                    <div style={{border:'1px solid var(--border)',borderRadius:8,marginTop:4,maxHeight:160,overflowY:'auto',background:'#fff',boxShadow:'var(--shadow)'}}>
+                      {filteredClients.slice(0,6).map(c=>(
+                        <div key={c.id} onClick={()=>{setSelClient(c);setClientSearch('');}} style={{padding:'9px 12px',cursor:'pointer',borderBottom:'1px solid var(--border)',fontSize:13}}>
+                          <b>{c.full_name}</b> <span style={{color:'var(--ink3)'}}>— {c.phone}</span>
+                        </div>
+                      ))}
+                      {filteredClients.length===0&&<div style={{padding:'9px 12px',color:'var(--ink3)',fontSize:13}}>Bulunamadı</div>}
+                    </div>
+                  )}
+                  {selClient&&<div style={{marginTop:8,padding:'9px 12px',background:'var(--bg2)',borderRadius:8,fontSize:13,display:'flex',justifyContent:'space-between',alignItems:'center'}}><span>{WA_SVG} <b>{selClient.full_name}</b> — {selClient.phone}</span><button className="btn btn-ghost btn-sm" onClick={()=>setSelClient(null)}>×</button></div>}
+                </div>
+              ):(
+                <div className="form-group"><label className="form-label">Alıcı</label><div style={{padding:'9px 12px',background:'var(--wa2)',borderRadius:8,fontSize:13,display:'flex',alignItems:'center',gap:8,color:'var(--wa-dark)'}}>{WA_SVG}<b>{selClient?.full_name}</b> — {selClient?.phone}</div></div>
+              )}
+              {err&&<div className="alert alert-error">{err}</div>}
+              <div className="form-group"><label className="checkbox-label"><input type="checkbox" checked={useCustom} onChange={e=>setUseCustom(e.target.checked)}/> Serbest mesaj yaz</label></div>
+              {!useCustom?(
+                <>
+                  <div className="form-group"><label className="form-label">Taslak</label>
+                    <select className="form-control" value={tplId} onChange={e=>setTplId(e.target.value)}>
+                      <option value="">— Taslak seçin —</option>
+                      {templates.map(t=><option key={t.id} value={t.id}>{t.name}{t.is_default?' ★':''}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-row c2">
+                    <div className="form-group"><label className="form-label">Tutar (₺)</label><input className="form-control" type="number" value={amount} onChange={e=>setAmount(e.target.value)}/></div>
+                    <div className="form-group"><label className="form-label">Son Tarih</label><input className="form-control" type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></div>
+                  </div>
+                  {preview&&<div className="form-group"><label className="form-label">Önizleme</label><div className="wa-preview-wrap"><div className="wa-preview-bubble">{preview}</div></div></div>}
+                </>
+              ):(
+                <div className="form-group"><label className="form-label">Mesaj</label><textarea className="form-control" rows={5} value={custom} onChange={e=>setCustom(e.target.value)} placeholder="Mesajınızı buraya yazın..."/><div className="char-count">{custom.length} karakter</div></div>
+              )}
+            </>
+          )}
+        </div>
+        {!waData&&<div className="modal-footer"><button className="btn btn-ghost" onClick={onClose}>İptal</button><button className="btn btn-wa" onClick={doGenerateLink} disabled={loading||!selClient}>{loading?<span className="spinner"/>:WA_SVG} WhatsApp Linki Oluştur</button></div>}
+      </div>
+    </div>
+  );
+}
+
+
+// ── Tahakkuk Fişi ─────────────────────────────────────────────────────────────
+function TahakkukFisi({toastFn}){
+  const [clients,setClients]=useState([]);
+  const [file,setFile]=useState(null);
+  const [loading,setLoading]=useState(false);
+  const [parsed,setParsed]=useState(null);
+  const [matched,setMatched]=useState(null);
+  const [satirlar,setSatirlar]=useState([]);
+  const [err,setErr]=useState('');
+  const [done,setDone]=useState(false);
+  const fileRef=React.useRef();
+
+  useEffect(()=>{api('/clients').then(cs=>setClients(cs.filter(c=>c.is_active))).catch(console.error);},[]);
+
+  const fmtAmt=a=>a!=null?parseFloat(a).toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺':'—';
+
+  const onFile=async(e)=>{
+    const f=e.target.files[0];
+    if(!f)return;
+    setFile(f);setParsed(null);setMatched(null);setSatirlar([]);setErr('');setDone(false);
+    setLoading(true);
+    try{
+      const fd=new FormData();
+      fd.append('file',f);
+      const res=await fetch(`${API_BASE}/api/tahakkuk/parse`,{credentials:'include',method:'POST',body:fd});
+      if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.detail||'Parse hatası');}
+      const data=await res.json();
+      setParsed(data);
+      // Vergi no ile müşteri eşleştir
+      if(data.vergi_no){
+        const found=clients.find(c=>(c.tax_number||'').replace(/\s/g,'')===data.vergi_no.replace(/\s/g,''));
+        if(found)setMatched(found);
+      }
+      // Satırları varsayılan olarak hepsini seç
+      setSatirlar((data.satirlar||[]).map(s=>({...s,selected:true})));
+    }catch(e){setErr(e.message);}finally{setLoading(false);}
+  };
+
+  const apply=async()=>{
+    if(!matched){setErr('Müşteri seçilmedi.');return;}
+    const secilenler=satirlar.filter(s=>s.selected&&s.payment_type&&s.odenecek);
+    if(!secilenler.length){setErr('En az bir vergi satırı seçilmeli.');return;}
+    setLoading(true);setErr('');
+    try{
+      await api('/tahakkuk/apply',{method:'POST',body:{client_id:matched.id,satirlar:secilenler}});
+      toastFn(`${secilenler.length} ödeme başarıyla oluşturuldu ✓`);
+      setDone(true);
+    }catch(e){setErr(e.message);}finally{setLoading(false);}
+  };
+
+  const reset=()=>{setFile(null);setParsed(null);setMatched(null);setSatirlar([]);setErr('');setDone(false);if(fileRef.current)fileRef.current.value='';};
+
+  const toggleSatir=(i)=>setSatirlar(s=>s.map((x,j)=>j===i?{...x,selected:!x.selected}:x));
+  const setAmount=(i,v)=>setSatirlar(s=>s.map((x,j)=>j===i?{...x,odenecek:parseFloat(v)||0}:x));
+  const setType=(i,v)=>setSatirlar(s=>s.map((x,j)=>j===i?{...x,payment_type:v}:x));
+
+  return(
+    <div style={{maxWidth:860}}>
+      {/* Yükleme alanı */}
+      {!parsed&&!loading&&(
+        <div className="card">
+          <div className="card-header"><span className="card-title">📄 Tahakkuk Fişi Yükle</span></div>
+          <div className="card-body">
+            <div style={{border:'2px dashed var(--border)',borderRadius:12,padding:48,textAlign:'center',cursor:'pointer',background:'var(--bg)',transition:'border-color .15s'}}
+              onClick={()=>fileRef.current?.click()}
+              onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor='var(--green)'}}
+              onDragLeave={e=>{e.currentTarget.style.borderColor='var(--border)'}}
+              onDrop={e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f){const inp=fileRef.current;const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;onFile({target:inp});}}}>
+              <div style={{fontSize:48,marginBottom:12}}>📄</div>
+              <div style={{fontFamily:'var(--serif)',fontSize:17,marginBottom:6}}>Tahakkuk fişini buraya sürükle veya tıkla</div>
+              <div style={{fontSize:12,color:'var(--ink3)'}}>PDF, JPG veya PNG — T.C. Maliye Bakanlığı Tahakkuk Fişi</div>
+            </div>
+            <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{display:'none'}} onChange={onFile}/>
+            {err&&<div className="alert alert-error" style={{marginTop:16}}>{err}</div>}
+          </div>
+        </div>
+      )}
+
+      {/* Yükleniyor */}
+      {loading&&(
+        <div className="card"><div className="card-body" style={{textAlign:'center',padding:60}}>
+          <span className="spinner spinner-dark" style={{width:32,height:32,marginBottom:16,display:'inline-block'}}/>
+          <div style={{fontFamily:'var(--serif)',fontSize:16,color:'var(--ink2)'}}>Fiş okunuyor ve analiz ediliyor...</div>
+        </div></div>
+      )}
+
+      {/* Sonuç */}
+      {parsed&&!loading&&!done&&(
+        <>
+          {/* Müşteri eşleştirme */}
+          <div className="card" style={{marginBottom:16}}>
+            <div className="card-header"><span className="card-title">👤 Müşteri Eşleştirme</span></div>
+            <div className="card-body">
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+                <div>
+                  <div className="form-label">Fişten Okunan</div>
+                  <div style={{background:'var(--bg)',borderRadius:8,padding:'10px 14px',fontSize:13}}>
+                    <div><b>Vergi No:</b> {parsed.vergi_no||<span className="text-muted">Okunamadı</span>}</div>
+                    <div><b>Ad:</b> {parsed.ad||<span className="text-muted">Okunamadı</span>}</div>
+                    {parsed.vadesi&&<div><b>Vade:</b> {new Date(parsed.vadesi).toLocaleDateString('tr-TR')}</div>}
+                  </div>
+                </div>
+                <div>
+                  <div className="form-label">Sistemdeki Müşteri {matched&&<span className="badge badge-green" style={{marginLeft:6}}>Otomatik Eşleşti ✓</span>}</div>
+                  <select className="form-control" value={matched?.id||''} onChange={e=>setMatched(clients.find(c=>c.id===e.target.value)||null)}>
+                    <option value="">— Müşteri seçin —</option>
+                    {clients.map(c=><option key={c.id} value={c.id}>{c.full_name} {c.tax_number?`(${c.tax_number})`:''}</option>)}
+                  </select>
+                  {!matched&&parsed.vergi_no&&<div className="alert alert-info" style={{marginTop:8,fontSize:12}}>Vergi no ({parsed.vergi_no}) sistemde bulunamadı. Lütfen müşteriyi seçin veya önce müşteri ekleyin.</div>}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Vergi satırları */}
+          <div className="card" style={{marginBottom:16}}>
+            <div className="card-header">
+              <span className="card-title">💰 Vergi Satırları</span>
+              <div style={{display:'flex',gap:8}}>
+                <button className="btn btn-ghost btn-sm" onClick={()=>setSatirlar(s=>s.map(x=>({...x,selected:true})))}>Tümünü Seç</button>
+                <button className="btn btn-ghost btn-sm" onClick={()=>setSatirlar(s=>s.map(x=>({...x,selected:false})))}>Hiçbirini Seçme</button>
+              </div>
+            </div>
+            <div className="table-wrap">
+              <table>
+                <thead><tr><th style={{width:40}}></th><th>Kod</th><th>Tür</th><th>Ödenecek Tutar</th><th>Vade</th><th>Sistem Türü</th></tr></thead>
+                <tbody>
+                  {satirlar.length===0&&<tr><td colSpan={6}><div className="empty"><div className="empty-icon">🔍</div><p>Vergi satırı okunamadı</p></div></td></tr>}
+                  {satirlar.map((s,i)=>(
+                    <tr key={i} style={{opacity:s.selected?1:.45}}>
+                      <td><input type="checkbox" checked={s.selected} onChange={()=>toggleSatir(i)}/></td>
+                      <td><span style={{fontFamily:'monospace',fontSize:12}}>{s.tur_kodu}</span></td>
+                      <td className="fw-600">{s.tur_adi}</td>
+                      <td>
+                        <input type="number" className="form-control" style={{width:120,display:'inline-block'}}
+                          value={s.odenecek||''} onChange={e=>setAmount(i,e.target.value)}/>
+                        <span style={{marginLeft:6,fontSize:12,color:'var(--ink3)'}}>₺</span>
+                      </td>
+                      <td style={{fontSize:12}}>{s.vadesi?new Date(s.vadesi).toLocaleDateString('tr-TR'):'—'}</td>
+                      <td>
+                        {s.payment_type?(
+                          <TypeBadge type={s.payment_type}/>
+                        ):(
+                          <select className="form-control" style={{fontSize:11,padding:'3px 6px'}} value={s.payment_type||''} onChange={e=>setType(i,e.target.value)}>
+                            <option value="">— Seçin —</option>
+                            {Object.entries(PT_MAP).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}
+                          </select>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {err&&<div className="alert alert-error">{err}</div>}
+
+          <div style={{display:'flex',gap:12,justifyContent:'flex-end'}}>
+            <button className="btn btn-ghost" onClick={reset}>İptal / Yeni Fiş</button>
+            <button className="btn btn-primary" onClick={apply} disabled={loading||!matched||!satirlar.some(s=>s.selected)}>
+              {loading?<span className="spinner"/>:<Ico n="check" s={14}/>} Ödemeleri Sisteme Ekle ({satirlar.filter(s=>s.selected).length} kalem)
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Başarı */}
+      {done&&(
+        <div className="card"><div className="card-body" style={{textAlign:'center',padding:60}}>
+          <div style={{fontSize:56,marginBottom:16}}>✅</div>
+          <div style={{fontFamily:'var(--serif)',fontSize:20,marginBottom:8}}>Ödemeler başarıyla oluşturuldu!</div>
+          <div style={{color:'var(--ink3)',fontSize:13,marginBottom:24}}>Ödemeler sayfasında görebilirsiniz.</div>
+          <button className="btn btn-primary" onClick={reset}>Yeni Fiş Yükle</button>
+        </div></div>
+      )}
+    </div>
+  );
+}
+
+function PersonalFinance({toastFn}){
+  const today=new Date();
+  const [selMonth,setSelMonth]=useState(`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`);
+  const [dirFilter,setDirFilter]=useState('');
+  const [records,setRecords]=useState([]);
+  const [summary,setSummary]=useState(null);
+  const [categories,setCategories]=useState([]);
+  const [modal,setModal]=useState(false);
+  const [form,setForm]=useState({title:'',amount:'',due_date:new Date().toISOString().split('T')[0],direction:'expense',category:'Diğer',recurrence:''});
+
+  const load=()=>{
+    let url=`/personal?month=${selMonth}`;
+    if(dirFilter)url+=`&direction=${dirFilter}`;
+    api(url).then(setRecords).catch(console.error);
+    api(`/personal/summary?month=${selMonth}`).then(setSummary).catch(console.error);
+  };
+  useEffect(()=>{
+    api('/personal/categories').then(setCategories).catch(console.error);
+  },[]);
+  useEffect(()=>{load();},[selMonth,dirFilter]);
+
+  const markPaid=async(id)=>{await api(`/personal/${id}/mark-paid`,{method:'POST'});toastFn('Ödendi ✓');load();};
+  const del=async(id)=>{if(!confirm('Silinsin mi?'))return;await api(`/personal/${id}`,{method:'DELETE'});toastFn('Silindi.');load();};
+  const save=async()=>{
+    if(!form.title||!form.amount||!form.due_date){toastFn('Başlık, tutar ve tarih zorunlu.','error');return;}
+    try{
+      await api('/personal',{method:'POST',body:{...form,amount:parseFloat(form.amount)}});
+      toastFn('Kaydedildi.');setModal(false);
+      setForm({title:'',amount:'',due_date:new Date().toISOString().split('T')[0],direction:'expense',category:'Diğer',recurrence:''});
+      load();
+    }catch(e){toastFn(e.message,'error');}
+  };
+
+  const fmtAmt=a=>parseFloat(a||0).toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺';
+  const fmtDate=d=>new Date(d+'T12:00:00').toLocaleDateString('tr-TR');
+  const today2=new Date().toISOString().split('T')[0];
+
+  // Ay seçici için son 12 ay
+  const monthOptions=[];
+  for(let i=0;i<12;i++){
+    const d=new Date(today.getFullYear(),today.getMonth()-i,1);
+    const val=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const label=d.toLocaleDateString('tr-TR',{month:'long',year:'numeric'});
+    monthOptions.push({val,label});
+  }
+
+  const incomeCategories=['Danışmanlık Geliri','Kira Geliri','Diğer Gelir'];
+
+  return(
+    <>
+      {/* Özet Kartlar */}
+      {summary&&(
+        <div className="stats-grid" style={{gridTemplateColumns:'repeat(4,1fr)',marginBottom:20}}>
+          <div className="stat" style={{'--before-color':'var(--green)'}}>
+            <div className="stat-label">Toplam Gelir</div>
+            <div className="stat-value" style={{fontSize:22,color:'var(--green)'}}>{fmtAmt(summary.total_income)}</div>
+            <div className="stat-sub">bu ay</div>
+          </div>
+          <div className="stat danger">
+            <div className="stat-label">Toplam Gider</div>
+            <div className="stat-value" style={{fontSize:22}}>{fmtAmt(summary.total_expense)}</div>
+            <div className="stat-sub">{fmtAmt(summary.pending_expense)} bekliyor</div>
+          </div>
+          <div className="stat" style={{borderTop:`3px solid ${summary.net>=0?'var(--green)':'var(--red)'}`}}>
+            <div className="stat-label">Net {summary.net>=0?'Kâr':'Zarar'}</div>
+            <div className="stat-value" style={{fontSize:22,color:summary.net>=0?'var(--green)':'var(--red)'}}>{fmtAmt(Math.abs(summary.net))}</div>
+            <div className="stat-sub">gelir − gider</div>
+          </div>
+          <div className="stat wa">
+            <div className="stat-label">Ödenen Gider</div>
+            <div className="stat-value" style={{fontSize:22}}>{fmtAmt(summary.paid_expense)}</div>
+            <div className="stat-sub">bu ay ödendi</div>
+          </div>
+        </div>
+      )}
+
+      {/* Kategori Dağılımı */}
+      {summary&&summary.category_breakdown.length>0&&(
+        <div className="card" style={{marginBottom:18}}>
+          <div className="card-header"><span className="card-title">📊 Gider Dağılımı</span></div>
+          <div className="card-body" style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            {summary.category_breakdown.map(c=>(
+              <div key={c.category} style={{background:'var(--bg2)',borderRadius:8,padding:'8px 14px',fontSize:13}}>
+                <span style={{color:'var(--ink3)',marginRight:6}}>{c.category}</span>
+                <span className="fw-600">{fmtAmt(c.amount)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Ana Tablo */}
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">💼 Kişisel Gelir & Giderler</span>
+          <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+            <select className="form-control" style={{width:170}} value={selMonth} onChange={e=>setSelMonth(e.target.value)}>
+              {monthOptions.map(o=><option key={o.val} value={o.val}>{o.label}</option>)}
+            </select>
+            <div className="filter-chips">
+              <button className={`chip ${dirFilter===''?'active':''}`} onClick={()=>setDirFilter('')}>Tümü</button>
+              <button className={`chip ${dirFilter==='income'?'active':''}`} onClick={()=>setDirFilter('income')} style={dirFilter==='income'?{background:'var(--green)',borderColor:'var(--green)'}:{}}>📥 Gelir</button>
+              <button className={`chip ${dirFilter==='expense'?'active':''}`} onClick={()=>setDirFilter('expense')} style={dirFilter==='expense'?{background:'var(--red)',borderColor:'var(--red)'}:{}}>📤 Gider</button>
+            </div>
+            <button className="btn btn-primary btn-sm" onClick={()=>setModal(true)}><Ico n="plus" s={13}/> Yeni Kayıt</button>
+          </div>
+        </div>
+        <div className="table-wrap" style={{maxHeight:500,overflowY:'auto'}}><table>
+          <thead className="sticky-thead">
+            <tr><th>Tarih</th><th>Yön</th><th>Kategori</th><th>Başlık</th><th>Tutar</th><th>Durum</th><th>Tekrar</th><th></th></tr>
+          </thead>
+          <tbody>
+            {records.length===0&&<tr><td colSpan={8}><div className="empty"><div className="empty-icon">💼</div><p>Bu ay kayıt yok</p></div></td></tr>}
+            {records.map(r=>{
+              const overdue=r.status==='pending'&&r.due_date<today2;
+              const isIncome=r.direction==='income';
+              return(
+                <tr key={r.id}>
+                  <td style={{fontSize:12}}>{fmtDate(r.due_date)}</td>
+                  <td>{isIncome
+                    ?<span className="badge badge-green">📥 Gelir</span>
+                    :<span className="badge badge-red">📤 Gider</span>}
+                  </td>
+                  <td><span className="badge badge-gray">{r.category}</span></td>
+                  <td className="fw-600">{r.title}</td>
+                  <td className="fw-600" style={{color:isIncome?'var(--green)':'var(--red)'}}>
+                    {isIncome?'+':'-'}{fmtAmt(r.amount)}
+                  </td>
+                  <td>
+                    {r.status==='paid'
+                      ?<span className="badge badge-green">✓ Tamamlandı</span>
+                      :overdue
+                        ?<span className="badge badge-red">Gecikmiş</span>
+                        :<span className="badge badge-amber">Bekliyor</span>}
+                  </td>
+                  <td style={{fontSize:11,color:'var(--ink3)'}}>
+                    {r.recurrence==='monthly'?'🔄 Aylık':r.recurrence==='yearly'?'🔄 Yıllık':'—'}
+                  </td>
+                  <td><div style={{display:'flex',gap:5}}>
+                    {r.status!=='paid'&&<button className="btn btn-ghost btn-sm" onClick={()=>markPaid(r.id)} title="Tamamlandı"><Ico n="check" s={12}/></button>}
+                    <button className="btn btn-danger btn-sm" onClick={()=>del(r.id)}><Ico n="trash" s={12}/></button>
+                  </div></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table></div>
+      </div>
+
+      {/* Yeni Kayıt Modal */}
+      {modal&&(
+        <div className="overlay" onClick={e=>e.target===e.currentTarget&&setModal(false)}>
+          <div className="modal">
+            <div className="modal-header">
+              <span className="modal-title">💼 Yeni Kişisel Kayıt</span>
+              <button className="btn-close" onClick={()=>setModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              {/* Gelir / Gider toggle */}
+              <div className="form-group">
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:0,borderRadius:8,overflow:'hidden',border:'1.5px solid var(--border)'}}>
+                  <button onClick={()=>setForm(f=>({...f,direction:'expense',category:f.category&&incomeCategories.includes(f.category)?'Diğer':f.category}))}
+                    style={{padding:'10px',fontWeight:600,fontSize:13,border:'none',cursor:'pointer',background:form.direction==='expense'?'var(--red)':'var(--white)',color:form.direction==='expense'?'#fff':'var(--ink3)',transition:'all .15s'}}>
+                    📤 Gider
+                  </button>
+                  <button onClick={()=>setForm(f=>({...f,direction:'income',category:'Danışmanlık Geliri'}))}
+                    style={{padding:'10px',fontWeight:600,fontSize:13,border:'none',cursor:'pointer',background:form.direction==='income'?'var(--green)':'var(--white)',color:form.direction==='income'?'#fff':'var(--ink3)',transition:'all .15s'}}>
+                    📥 Gelir
+                  </button>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Başlık *</label>
+                <input className="form-control" value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} placeholder={form.direction==='income'?'Danışmanlık ücreti, kira geliri...':'Kira, elektrik, SGK primi...'}/>
+              </div>
+              <div className="form-row c2">
+                <div className="form-group">
+                  <label className="form-label">Tutar (₺) *</label>
+                  <input className="form-control" type="number" value={form.amount} onChange={e=>setForm(f=>({...f,amount:e.target.value}))} placeholder="0.00"/>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tarih *</label>
+                  <input className="form-control" type="date" value={form.due_date} onChange={e=>setForm(f=>({...f,due_date:e.target.value}))}/>
+                </div>
+              </div>
+              <div className="form-row c2">
+                <div className="form-group">
+                  <label className="form-label">Kategori</label>
+                  <select className="form-control" value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
+                    {(form.direction==='income'
+                      ?categories.filter(c=>incomeCategories.includes(c))
+                      :categories.filter(c=>!incomeCategories.includes(c))
+                    ).map(c=><option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tekrar</label>
+                  <select className="form-control" value={form.recurrence} onChange={e=>setForm(f=>({...f,recurrence:e.target.value}))}>
+                    <option value="">Yok</option>
+                    <option value="monthly">Aylık</option>
+                    <option value="yearly">Yıllık</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={()=>setModal(false)}>İptal</button>
+              <button className={`btn ${form.direction==='income'?'btn-primary':'btn-danger'}`} onClick={save}>
+                <Ico n="check" s={13}/> {form.direction==='income'?'Gelir Ekle':'Gider Ekle'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function WhatsappLogs(){
+  const [logs,setLogs]=useState([]);
+  useEffect(()=>{api('/whatsapp/logs?limit=200').then(setLogs).catch(console.error);},[]);
+  return(
+    <div className="card">
+      <div className="card-header"><span className="card-title">WhatsApp Geçmişi</span><span className="badge badge-gray">{logs.length} kayıt</span></div>
+      <div className="table-wrap"><table>
+        <thead><tr><th>Tarih</th><th>Müşteri</th><th>Telefon</th><th>Tür</th><th>Mesaj Özeti</th></tr></thead>
+        <tbody>
+          {logs.length===0&&<tr><td colSpan={5}><div className="empty"><div className="empty-icon">💬</div><p>Henüz WhatsApp mesajı gönderilmedi</p></div></td></tr>}
+          {logs.map(l=>(
+            <tr key={l.id}>
+              <td style={{fontSize:12,whiteSpace:'nowrap'}}>{new Date(l.sent_at).toLocaleString('tr-TR')}</td>
+              <td className="fw-600">{l.client_name||'—'}</td>
+              <td style={{fontFamily:'monospace',fontSize:12}}>{l.phone}</td>
+              <td>{l.payment_type&&l.payment_type!=='manuel'&&l.payment_type!=='fatura_geldi'?<TypeBadge type={l.payment_type}/>:<span className="badge badge-gray">{l.payment_type==='fatura_geldi'?'📩 Gelen Fatura':'Manuel'}</span>}</td>
+              <td style={{maxWidth:300,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12,color:'var(--ink2)'}}>{l.message_body}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table></div>
+    </div>
+  );
+}
+
+function WaIncoming({toastFn}){
+  const [invoices,setInvoices]=useState([]);
+  const [clients,setClients]=useState([]);
+  const [processModal,setProcessModal]=useState(null);
+  const [pForm,setPForm]=useState({client_id:'',title:'',amount:'',due_date:'',payment_type:'muhasebe_ucreti'});
+  const [loading,setLoading]=useState(false);
+  const load=()=>{
+    api('/wa-incoming/incoming-invoices').then(setInvoices).catch(()=>{});
+    api('/clients').then(cs=>setClients(cs.filter(c=>c.is_active))).catch(()=>{});
+  };
+  useEffect(()=>{load();},[]);
+  const setP=(k,v)=>setPForm(f=>({...f,[k]:v}));
+  const openProcess=(inv)=>{
+    setProcessModal(inv);
+    setPForm({client_id:inv.client_id||'',title:`WhatsApp Fatura — ${inv.client_name||inv.phone}`,amount:'',due_date:new Date().toISOString().split('T')[0],payment_type:'muhasebe_ucreti'});
+  };
+  const processInvoice=async()=>{
+    if(!pForm.client_id){toastFn('Müşteri seçin.','error');return;}
+    setLoading(true);
+    try{
+      await api(`/wa-incoming/incoming-invoices/${processModal.id}/process`,{method:'POST',body:pForm});
+      toastFn('Fatura sisteme kaydedildi ✓');
+      setProcessModal(null);load();
+    }catch(e){toastFn(e.message,'error');}finally{setLoading(false);}
+  };
+  const fmtTime=(s)=>s?new Date(s).toLocaleString('tr-TR'):'-';
+  return(
+    <>
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">📩 WhatsApp'tan Gelen Faturalar</span>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <span className="badge badge-amber">{invoices.filter(i=>i.status==='pending').length} bekliyor</span>
+            <button className="btn btn-ghost btn-sm" onClick={load}>↻ Yenile</button>
+          </div>
+        </div>
+        <div style={{padding:'12px 16px',background:'var(--blue2)',borderBottom:'1px solid var(--border)',fontSize:12,color:'var(--blue)'}}>
+          💡 WhatsApp Business webhook etkinleştirildiğinde müşterilerden gelen fatura görsel/belgeleri burada otomatik listelenir.
+          Onay butonuyla sisteme kayıt oluşturabilirsiniz.
+        </div>
+        <div className="table-wrap"><table>
+          <thead><tr><th>Tarih/Saat</th><th>Gönderen</th><th>Müşteri</th><th>İçerik</th><th>Durum</th><th></th></tr></thead>
+          <tbody>
+            {invoices.length===0&&<tr><td colSpan={6}><div className="empty"><div className="empty-icon">📩</div><p>Henüz gelen fatura yok</p><p style={{fontSize:11,marginTop:4}}>WhatsApp webhook bağlandığında buraya otomatik gelir</p></div></td></tr>}
+            {invoices.map(inv=>(
+              <tr key={inv.id}>
+                <td style={{fontSize:11,whiteSpace:'nowrap'}}>{fmtTime(inv.sent_at)}</td>
+                <td style={{fontFamily:'monospace',fontSize:12}}>{inv.phone}</td>
+                <td className="fw-600">{inv.client_name||<span className="badge badge-red">Eşleşmedi</span>}</td>
+                <td style={{maxWidth:240,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:12}}>{inv.message_body}</td>
+                <td><span className={`badge ${inv.status==='pending'?'badge-amber':'badge-green'}`}>{inv.status==='pending'?'Bekliyor':'İşlendi'}</span></td>
+                <td>{inv.status==='pending'&&<button className="btn btn-primary btn-sm" onClick={()=>openProcess(inv)}><Ico n="check" s={12}/> Kaydet</button>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table></div>
+      </div>
+      {processModal&&(
+        <div className="overlay" onClick={e=>e.target===e.currentTarget&&setProcessModal(null)}>
+          <div className="modal">
+            <div className="modal-header"><span className="modal-title">Faturayı Sisteme Kaydet</span><button className="btn-close" onClick={()=>setProcessModal(null)}>×</button></div>
+            <div className="modal-body">
+              <div style={{padding:'10px 12px',background:'var(--bg2)',borderRadius:8,fontSize:12,marginBottom:16,fontFamily:'monospace'}}>{processModal.message_body}</div>
+              <div className="form-group"><label className="form-label">Müşteri *</label>
+                <select className="form-control" value={pForm.client_id} onChange={e=>setP('client_id',e.target.value)}>
+                  <option value="">— Müşteri seçin —</option>
+                  {clients.map(c=><option key={c.id} value={c.id}>{c.full_name}</option>)}
+                </select>
+              </div>
+              <div className="form-group"><label className="form-label">Başlık</label><input className="form-control" value={pForm.title} onChange={e=>setP('title',e.target.value)}/></div>
+              <div className="form-row c2">
+                <div className="form-group"><label className="form-label">Tutar (₺)</label><input className="form-control" type="number" value={pForm.amount} onChange={e=>setP('amount',e.target.value)}/></div>
+                <div className="form-group"><label className="form-label">Vade Tarihi</label><input className="form-control" type="date" value={pForm.due_date} onChange={e=>setP('due_date',e.target.value)}/></div>
+              </div>
+              <div className="form-group"><label className="form-label">Ödeme Türü</label>
+                <select className="form-control" value={pForm.payment_type} onChange={e=>setP('payment_type',e.target.value)}>
+                  {Object.entries(PT_MAP).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={()=>setProcessModal(null)}>İptal</button>
+              <button className="btn btn-primary" onClick={processInvoice} disabled={loading}>
+                {loading?<span className="spinner"/>:<Ico n="check" s={13}/>} Ödeme Kaydı Oluştur
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function Settings({username,toastFn}){
+  const [form,setForm]=useState({current_password:'',new_username:username,new_password:'',new_password2:''});
+  const [err,setErr]=useState('');
+  const [loading,setLoading]=useState(false);
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const submit=async()=>{
+    setErr('');
+    if(!form.current_password){setErr('Mevcut şifre gerekli.');return;}
+    if(form.new_password!==form.new_password2){setErr('Yeni şifreler eşleşmiyor.');return;}
+    if(form.new_password.length>0&&form.new_password.length<6){setErr('En az 6 karakter.');return;}
+    setLoading(true);
+    try{await api('/auth/change-credentials',{method:'POST',body:{current_password:form.current_password,new_username:form.new_username,new_password:form.new_password||form.current_password}});toastFn('Bilgiler güncellendi.');setTimeout(()=>window.location.reload(),1500);}
+    catch(e){setErr(e.message);}finally{setLoading(false);}
+  };
+
+  const [wa,setWa]=useState({wa_phone_number_id:'',wa_access_token:'',wa_template_name:'odeme_hatirlatma',wa_template_lang:'tr'});
+  const [waConfigured,setWaConfigured]=useState(false);
+  const [waLoading,setWaLoading]=useState(false);
+  const [waErr,setWaErr]=useState('');
+  const setW=(k,v)=>setWa(f=>({...f,[k]:v}));
+  useEffect(()=>{
+    api('/whatsapp/settings').then(d=>{
+      setWa(f=>({...f,wa_phone_number_id:d.wa_phone_number_id||'',wa_access_token:'',wa_template_name:d.wa_template_name||'odeme_hatirlatma',wa_template_lang:d.wa_template_lang||'tr'}));
+      setWaConfigured(d.configured||false);
+    }).catch(()=>{});
+  },[]);
+  const saveWa=async()=>{
+    setWaErr('');
+    if(!wa.wa_phone_number_id){setWaErr('Phone Number ID zorunlu.');return;}
+    setWaLoading(true);
+    try{await api('/whatsapp/settings',{method:'POST',body:wa});toastFn('WhatsApp API ayarları kaydedildi ✓');setWaConfigured(true);}
+    catch(e){setWaErr(e.message);}finally{setWaLoading(false);}
+  };
+
+  return(
+    <div style={{maxWidth:540,display:'flex',flexDirection:'column',gap:20}}>
+      <div className="card">
+        <div className="card-header"><span className="card-title">🔐 Giriş Bilgilerini Değiştir</span></div>
+        <div className="card-body">
+          <div className="alert alert-info" style={{marginBottom:18}}>Mevcut kullanıcı adı: <b>{username}</b></div>
+          {err&&<div className="alert alert-error">{err}</div>}
+          <div className="form-group"><label className="form-label">Mevcut Şifre *</label><input className="form-control" type="password" value={form.current_password} onChange={e=>set('current_password',e.target.value)}/></div>
+          <div className="form-group"><label className="form-label">Yeni Kullanıcı Adı</label><input className="form-control" value={form.new_username} onChange={e=>set('new_username',e.target.value)}/></div>
+          <div className="form-group"><label className="form-label">Yeni Şifre <span style={{color:'var(--ink3)',fontWeight:400}}>(boş bırakırsan değişmez)</span></label><input className="form-control" type="password" value={form.new_password} onChange={e=>set('new_password',e.target.value)}/></div>
+          <div className="form-group"><label className="form-label">Yeni Şifre (tekrar)</label><input className="form-control" type="password" value={form.new_password2} onChange={e=>set('new_password2',e.target.value)}/></div>
+          <button className="btn btn-primary" onClick={submit} disabled={loading}>{loading?<span className="spinner"/>:<Ico n="check" s={14}/>} Kaydet</button>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">💬 WhatsApp Business API</span>
+          {waConfigured&&<span className="badge badge-green">✓ Bağlı</span>}
+        </div>
+        <div className="card-body">
+          <div className="alert alert-info" style={{marginBottom:16,fontSize:13}}>
+            <b>Nasıl alınır?</b> → <a href="https://developers.facebook.com" target="_blank" rel="noreferrer" style={{color:'var(--brand)'}}>developers.facebook.com</a> → Uygulamanız → WhatsApp → API Kurulumu sayfasından <b>Phone Number ID</b> ve <b>Access Token</b>’ı kopyalayın.
+          </div>
+          {waErr&&<div className="alert alert-error" style={{marginBottom:12}}>{waErr}</div>}
+          <div className="form-group">
+            <label className="form-label">Phone Number ID *</label>
+            <input className="form-control" placeholder="Örn: 123456789012345" value={wa.wa_phone_number_id} onChange={e=>setW('wa_phone_number_id',e.target.value)}/>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Access Token * {waConfigured&&<span style={{color:'var(--ink3)',fontWeight:400,fontSize:12}}>(kayıtlı — değiştirmek için yeniden gir)</span>}</label>
+            <input className="form-control" type="password" placeholder={waConfigured?"••••••••••":"EAAxxxxx..."} value={wa.wa_access_token} onChange={e=>setW('wa_access_token',e.target.value)}/>
+          </div>
+          <div style={{display:'flex',gap:12}}>
+            <div className="form-group" style={{flex:1}}>
+              <label className="form-label">Onaylı Şablon Adı</label>
+              <input className="form-control" placeholder="odeme_hatirlatma" value={wa.wa_template_name} onChange={e=>setW('wa_template_name',e.target.value)}/>
+            </div>
+            <div className="form-group" style={{width:100}}>
+              <label className="form-label">Dil Kodu</label>
+              <input className="form-control" placeholder="tr" value={wa.wa_template_lang} onChange={e=>setW('wa_template_lang',e.target.value)}/>
+            </div>
+          </div>
+          <div className="alert alert-info" style={{fontSize:12,marginBottom:12}}>
+            Şablon değişken sırası: <b>{'{{1}}'}</b> İsim &nbsp;·&nbsp; <b>{'{{2}}'}</b> Ödeme Türü &nbsp;·&nbsp; <b>{'{{3}}'}</b> Tutar &nbsp;·&nbsp; <b>{'{{4}}'}</b> Vade Tarihi
+          </div>
+          <button className="btn btn-primary" onClick={saveWa} disabled={waLoading}>
+            {waLoading?<span className="spinner"/>:<Ico n="check" s={14}/>} Kaydet
+          </button>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header"><span className="card-title">📊 Luca Muhasebe Entegrasyonu</span><span className="badge badge-green">Excel Aktarım</span></div>
+        <div className="card-body">
+          <div className="alert alert-success" style={{marginBottom:14}}>
+            Ödemeler sayfasından <b>📊 Luca'ya Aktar</b> butonuyla mevcut filtrenize göre Excel dosyası oluşturabilirsiniz.
+          </div>
+          <div style={{fontSize:13,color:'var(--ink2)',lineHeight:1.8}}>
+            <b>Luca'ya Aktarma Adımları:</b>
+            <ol style={{paddingLeft:20,marginTop:8}}>
+              <li>Ödemeler sayfasında ay ve tür filtresini seçin</li>
+              <li><b>📊 Luca'ya Aktar</b> butonuna tıklayın</li>
+              <li>İndirilen Excel dosyasını açın ve kontrol edin</li>
+              <li>Luca MMP'de <b>Muhasebe → Fiş İşlemleri → Excel Veri Aktarımı</b>'na gidin</li>
+              <li>Dosyayı seçin ve aktarımı tamamlayın</li>
+            </ol>
+          </div>
+          <div style={{marginTop:14,padding:'10px 14px',background:'var(--amber2)',borderRadius:8,fontSize:12,color:'var(--amber)'}}>
+            ⚠️ Hesap kodları (borç/alacak) standart tek düzen hesap planına göre önceden tanımlıdır. Kendi hesap planınıza göre Excel'de düzenleyebilirsiniz.
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header"><span className="card-title">📩 WhatsApp Gelen Mesaj Webhook</span></div>
+        <div className="card-body">
+          <div style={{fontSize:13,color:'var(--ink2)',lineHeight:1.8}}>
+            <b>Webhook URL'niz:</b><br/>
+            <code style={{display:'block',background:'var(--bg2)',padding:'8px 12px',borderRadius:6,fontFamily:'monospace',fontSize:12,marginTop:6,marginBottom:12,wordBreak:'break-all'}}>
+              {window.location.origin}/api/wa-incoming/webhook
+            </code>
+            Meta Developers Console → WhatsApp → Configuration sayfasında bu URL'yi webhook olarak ekleyin. Müşterilerinizden gelen fatura görselleri ve belgeleri otomatik olarak <b>Gelen Faturalar</b> sayfasına düşer.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// ── Vergi Takvimi ─────────────────────────────────────────
+function TaxCalendar({toastFn}){
+  const today=new Date();
+  const [year,setYear]=useState(today.getFullYear());
+  const [month,setMonth]=useState(today.getMonth()+1);
+  const [data,setData]=useState(null);
+  const [loading,setLoading]=useState(false);
+  const [autoLoading,setAutoLoading]=useState(false);
+  const [autoResult,setAutoResult]=useState(null);
+  const [selTypes,setSelTypes]=useState([]);
+  const [overwrite,setOverwrite]=useState(false);
+
+  const MONTHS=['','Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const years=[today.getFullYear()-1,today.getFullYear(),today.getFullYear()+1];
+
+  const load=()=>{
+    setLoading(true);setData(null);setAutoResult(null);
+    api(`/tax-calendar/events?year=${year}&month=${month}`)
+      .then(setData).catch(e=>toastFn(e.message,'error')).finally(()=>setLoading(false));
+  };
+  useEffect(()=>{load();},[year,month]);
+
+  const toggleType=(t)=>setSelTypes(prev=>prev.includes(t)?prev.filter(x=>x!==t):[...prev,t]);
+
+  const autoCreate=async()=>{
+    setAutoLoading(true);setAutoResult(null);
+    try{
+      const r=await api('/tax-calendar/auto-create',{method:'POST',body:{year,month,payment_types:selTypes,overwrite}});
+      setAutoResult(r);
+      toastFn(`${r.created} ödeme oluşturuldu, ${r.skipped} atlandı.`);
+    }catch(e){toastFn(e.message,'error');}finally{setAutoLoading(false);}
+  };
+
+  const APPLIES_LABEL={'monthly':'Her Ay','quarterly':'3 Aylık','annual':'Yıllık','biannual':'6 Aylık'};
+  const APPLIES_COLOR={'monthly':'badge-green','quarterly':'badge-amber','annual':'badge-red','biannual':'badge-red'};
+
+  return(
+    <div>
+      {/* Ay seçici */}
+      <div className="card" style={{marginBottom:16}}>
+        <div className="card-header">
+          <span className="card-title">🗓️ Türkiye Vergi Takvimi</span>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <select className="form-control" style={{width:90}} value={year} onChange={e=>setYear(+e.target.value)}>
+              {years.map(y=><option key={y} value={y}>{y}</option>)}
+            </select>
+            <select className="form-control" style={{width:120}} value={month} onChange={e=>setMonth(+e.target.value)}>
+              {MONTHS.slice(1).map((m,i)=><option key={i+1} value={i+1}>{m}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="card-body" style={{padding:0}}>
+          {loading&&<div style={{padding:32,textAlign:'center'}}><span className="spinner"/></div>}
+          {data&&(
+            <div className="table-wrap"><table>
+              <thead className="sticky-thead"><tr><th>Vade Tarihi</th><th>Vergi / Yükümlülük</th><th>Tür</th><th>Sıklık</th><th>Açıklama</th></tr></thead>
+              <tbody>
+                {data.events.length===0&&<tr><td colSpan={5}><div className="empty"><div className="empty-icon">✅</div><p>Bu ay için vergi yükümlülüğü yok</p></div></td></tr>}
+                {data.events.map((ev,i)=>(
+                  <tr key={i}>
+                    <td><span className="badge badge-amber">{new Date(ev.due_date+'T12:00:00').toLocaleDateString('tr-TR')}</span></td>
+                    <td className="fw-600">{ev.name}</td>
+                    <td><TypeBadge type={ev.payment_type}/></td>
+                    <td><span className={`badge ${APPLIES_COLOR[ev.applies_to]||'badge-amber'}`}>{APPLIES_LABEL[ev.applies_to]||ev.applies_to}</span></td>
+                    <td style={{fontSize:12,color:'var(--ink3)'}}>{ev.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table></div>
+          )}
+        </div>
+      </div>
+
+      {/* Otomatik ödeme oluştur */}
+      {data&&data.events.length>0&&(
+        <div className="card">
+          <div className="card-header"><span className="card-title">⚡ Otomatik Ödeme Oluştur</span></div>
+          <div className="card-body">
+            <p style={{fontSize:13,color:'var(--ink3)',marginBottom:12}}>
+              Seçili vergi türleri için tüm aktif müşterilere <b>{MONTHS[month]} {year}</b> ödemeleri otomatik oluşturulur.
+            </p>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
+              {[...new Set(data.events.map(e=>e.payment_type))].map(t=>(
+                <button key={t} className={`chip ${selTypes.includes(t)?'active':''}`} onClick={()=>toggleType(t)}>
+                  {selTypes.includes(t)?'✓ ':''}<TypeBadge type={t}/>
+                </button>
+              ))}
+              <button className="chip" style={{marginLeft:'auto'}} onClick={()=>setSelTypes(selTypes.length?[]:[...new Set(data.events.map(e=>e.payment_type))])}>
+                {selTypes.length?'Hiçbirini Seçme':'Tümünü Seç'}
+              </button>
+            </div>
+            <label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,marginBottom:14,cursor:'pointer'}}>
+              <input type="checkbox" checked={overwrite} onChange={e=>setOverwrite(e.target.checked)}/>
+              Zaten var olan ödemelerin üzerine yaz (dikkatli kullan)
+            </label>
+            {autoResult&&(
+              <div className="alert alert-info" style={{marginBottom:12,fontSize:13}}>
+                ✅ <b>{autoResult.created}</b> ödeme oluşturuldu &nbsp;·&nbsp; <b>{autoResult.skipped}</b> atlandı &nbsp;·&nbsp; {autoResult.clients_processed} müşteri işlendi
+              </div>
+            )}
+            <button className="btn btn-primary" onClick={autoCreate} disabled={autoLoading||!selTypes.length}>
+              {autoLoading?<span className="spinner"/>:'⚡'} Seçili Türler İçin Ödemeleri Oluştur ({selTypes.length} tür)
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ── Hatırlatma Ayarları ───────────────────────────────────
+function ReminderSettings({toastFn}){
+  const [rules,setRules]=useState([]);
+  const [logs,setLogs]=useState([]);
+  const [form,setForm]=useState({name:'',days_before:3,payment_type:'',is_active:true});
+  const [editing,setEditing]=useState(null);
+  const [loading,setLoading]=useState(false);
+  const [runLoading,setRunLoading]=useState(false);
+  const [runResult,setRunResult]=useState(null);
+  const [status,setStatus]=useState(null);
+  const loadStatus=()=>api('/reminders/status').then(setStatus).catch(()=>{});
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+
+  const loadRules=()=>api('/reminders/rules').then(setRules).catch(console.error);
+  const loadLogs=()=>api('/reminders/logs?limit=30').then(setLogs).catch(console.error);
+  useEffect(()=>{loadRules();loadLogs();loadStatus();},[]);
+
+  const save=async()=>{
+    if(!form.name){toastFn('Kural adı zorunlu.','error');return;}
+    setLoading(true);
+    try{
+      const body={...form,days_before:+form.days_before,payment_type:form.payment_type||null};
+      if(editing){await api(`/reminders/rules/${editing}`,{method:'PUT',body});}
+      else{await api('/reminders/rules',{method:'POST',body});}
+      toastFn('Kaydedildi ✓');
+      setForm({name:'',days_before:3,payment_type:'',is_active:true});
+      setEditing(null);loadRules();
+    }catch(e){toastFn(e.message,'error');}finally{setLoading(false);}
+  };
+
+  const startEdit=(r)=>{
+    setEditing(r.id);
+    setForm({name:r.name,days_before:r.days_before,payment_type:r.payment_type||'',is_active:r.is_active});
+  };
+
+  const del=async(id)=>{
+    if(!confirm('Kural silinsin mi?'))return;
+    await api(`/reminders/rules/${id}`,{method:'DELETE'});
+    toastFn('Silindi.');loadRules();
+  };
+
+  const toggle=async(r)=>{
+    await api(`/reminders/rules/${r.id}`,{method:'PUT',body:{...r,is_active:!r.is_active,payment_type:r.payment_type||null}});
+    loadRules();
+  };
+
+  const runNow=async()=>{
+    setRunLoading(true);setRunResult(null);
+    try{
+      const r=await api('/reminders/run-now',{method:'POST',body:{}});
+      setRunResult(r);
+      toastFn(r.sent>0?`${r.sent} hatırlatma hazırlandı ✓`:'Yeni hatırlatma yok.');
+      loadStatus();
+    }
+    catch(e){toastFn(e.message,'error');}finally{setRunLoading(false);loadLogs();}
+  };
+
+  const PT_OPTIONS=[
+    {v:'',l:'Tüm Türler'},
+    {v:'kdv',l:'KDV'},{v:'stopaj',l:'Stopaj'},{v:'muhasebe_ucreti',l:'Muhasebe Ücreti'},
+    {v:'gelir_vergisi',l:'Gelir Vergisi'},{v:'gecici_vergi',l:'Geçici Vergi'},
+    {v:'sgk',l:'SGK'},{v:'damga_vergisi',l:'Damga Vergisi'},
+  ];
+
+  const STATUS_COLOR={logged:'badge-amber',sent:'badge-green',pending:'badge-amber',failed:'badge-red',skipped:'badge-green'};
+
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:20}}>
+
+      {/* Kural listesi */}
+      <div className="card">
+        <div className="card-header"><span className="card-title">🔔 Hatırlatma Kuralları</span></div>
+        <div className="table-wrap"><table>
+          <thead className="sticky-thead"><tr><th>Kural Adı</th><th>Ne Zaman</th><th>Ödeme Türü</th><th>Durum</th><th></th></tr></thead>
+          <tbody>
+            {rules.length===0&&<tr><td colSpan={5}><div className="empty"><div className="empty-icon">🔔</div><p>Henüz kural yok — aşağıdan ekle</p></div></td></tr>}
+            {rules.map(r=>(
+              <tr key={r.id} style={{opacity:r.is_active?1:.5}}>
+                <td className="fw-600">{r.name}</td>
+                <td><span className="badge badge-amber">Vade - {r.days_before} gün</span></td>
+                <td>{r.payment_type?<TypeBadge type={r.payment_type}/>:<span className="text-muted">Tüm Türler</span>}</td>
+                <td>
+                  <button onClick={()=>toggle(r)} style={{background:'none',border:'none',cursor:'pointer',fontSize:18}} title={r.is_active?'Pasife al':'Aktif et'}>
+                    {r.is_active?'🟢':'⚪'}
+                  </button>
+                </td>
+                <td><div style={{display:'flex',gap:5}}>
+                  <button className="btn btn-ghost btn-sm" onClick={()=>startEdit(r)}><Ico n="edit" s={12}/></button>
+                  <button className="btn btn-danger btn-sm" onClick={()=>del(r.id)}><Ico n="trash" s={12}/></button>
+                </div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table></div>
+      </div>
+
+      {/* Kural ekle / düzenle */}
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">{editing?'Kuralı Düzenle':'➕ Yeni Kural Ekle'}</span>
+          {editing&&<button className="btn btn-ghost btn-sm" onClick={()=>{setEditing(null);setForm({name:'',days_before:3,payment_type:'',is_active:true});}}>İptal</button>}
+        </div>
+        <div className="card-body">
+          <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'flex-end'}}>
+            <div className="form-group" style={{flex:2,minWidth:160}}>
+              <label className="form-label">Kural Adı</label>
+              <input className="form-control" placeholder="Örn: 3 Gün Önce" value={form.name} onChange={e=>set('name',e.target.value)}/>
+            </div>
+            <div className="form-group" style={{width:140}}>
+              <label className="form-label">Vade Öncesi (Gün)</label>
+              <input className="form-control" type="number" min="0" max="30" value={form.days_before} onChange={e=>set('days_before',e.target.value)}/>
+            </div>
+            <div className="form-group" style={{flex:1,minWidth:150}}>
+              <label className="form-label">Ödeme Türü</label>
+              <select className="form-control" value={form.payment_type} onChange={e=>set('payment_type',e.target.value)}>
+                {PT_OPTIONS.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Durum</label>
+              <select className="form-control" value={form.is_active?'1':'0'} onChange={e=>set('is_active',e.target.value==='1')}>
+                <option value="1">Aktif</option>
+                <option value="0">Pasif</option>
+              </select>
+            </div>
+            <button className="btn btn-primary" onClick={save} disabled={loading} style={{marginBottom:16}}>
+              {loading?<span className="spinner"/>:<Ico n="check" s={14}/>} {editing?'Güncelle':'Ekle'}
+            </button>
+          </div>
+          <div className="alert alert-info" style={{fontSize:12}}>
+            💡 Birden fazla kural ekleyebilirsin — örneğin "3 Gün Önce" ve "1 Gün Önce" kurallarını aynı anda aktif tutarsan müşteriye iki ayrı hatırlatma gider.
+            Scheduler her sabah 08:30'da otomatik çalışır.
+          </div>
+        </div>
+      </div>
+
+      {/* Manuel tetikleme */}
+      <div className="card">
+        <div className="card-header"><span className="card-title">⚙️ Scheduler Durumu</span></div>
+        <div className="card-body">
+          {status&&(
+            <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:14}}>
+              <div style={{fontSize:13}}>
+                <span style={{color:'var(--ink3)'}}>Son kontrol: </span>
+                <b>{status.last_check?new Date(status.last_check+'T12:00:00').toLocaleDateString('tr-TR'):'Hiç çalışmadı'}</b>
+              </div>
+              {status.missed_days>0&&(
+                <div className="badge badge-amber">
+                  ⚠️ {status.missed_days} gün kaçırıldı — uygulama açılışında telafi edildi
+                </div>
+              )}
+              {status.missed_days===0&&status.last_check&&(
+                <div className="badge badge-green">✓ Güncel</div>
+              )}
+              <div style={{fontSize:13}}>
+                <span style={{color:'var(--ink3)'}}>Bekleyen log: </span>
+                <b>{status.pending_logs}</b>
+              </div>
+            </div>
+          )}
+          <p style={{fontSize:13,color:'var(--ink3)',marginBottom:12}}>
+            Uygulama her açıldığında otomatik tarama yapılır. Hafta sonu veya tatil günleri kaçırılsa bile
+            bir sonraki açılışta telafi edilir — vadesi geçmemiş ödemeler için hatırlatma hazırlanır.
+          </p>
+          {runResult&&(
+            <div className="alert alert-info" style={{marginBottom:12,fontSize:13}}>
+              ✅ {runResult.sent} hatırlatma hazırlandı &nbsp;·&nbsp; {runResult.skipped} atlandı
+            </div>
+          )}
+          <button className="btn btn-ghost" onClick={runNow} disabled={runLoading}>
+            {runLoading?<span className="spinner"/>:'▶'} Şimdi Çalıştır
+          </button>
+        </div>
+      </div>
+
+      {/* Son loglar */}
+      <div className="card">
+        <div className="card-header"><span className="card-title">📋 Son Hatırlatma Logları</span></div>
+        <div className="table-wrap" style={{maxHeight:320,overflowY:'auto'}}><table>
+          <thead className="sticky-thead"><tr><th>Müşteri</th><th>Durum</th><th>Oluşturulma</th><th>Mesaj</th></tr></thead>
+          <tbody>
+            {logs.length===0&&<tr><td colSpan={4}><div className="empty"><div className="empty-icon">📋</div><p>Henüz log yok</p></div></td></tr>}
+            {logs.map(l=>(
+              <tr key={l.id}>
+                <td className="fw-600">{l.client_name||l.phone}</td>
+                <td><span className={`badge ${STATUS_COLOR[l.status]||'badge-amber'}`}>{l.status}</span></td>
+                <td style={{fontSize:12}}>{l.created_at?new Date(l.created_at).toLocaleString('tr-TR'):'-'}</td>
+                <td style={{fontSize:12,maxWidth:300,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.message_body}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table></div>
+      </div>
+
+    </div>
+  );
+}
+
+function App(){
+  const [authState,setAuthState]=useState('loading');
+  const [username,setUsername]=useState('');
+  const [page,setPage]=useState('dashboard');
+  const [waModal,setWaModal]=useState(null);
+  const [toast,setToast]=useState({msg:'',type:'success'});
+  const toastFn=(msg,type='success')=>setToast({msg,type});
+  const openWa=(client,payment=null)=>setWaModal({client,payment});
+  useEffect(()=>{window.__handleUnauth=()=>{setAuthState('login');setUsername('');};},[]);
+  useEffect(()=>{api('/auth/me').then(r=>{setUsername(r.username);setAuthState('app');}).catch(()=>setAuthState('login'));},[]);
+  const logout=async()=>{await api('/auth/logout',{method:'POST'}).catch(()=>{});setAuthState('login');setUsername('');};
+
+  if(authState==='loading')return<div className="loading-page"><span className="spinner spinner-dark" style={{width:28,height:28}}/><span>Yükleniyor...</span></div>;
+  if(authState==='login')return <LoginPage onLogin={u=>{setUsername(u);setAuthState('app');}}/>;
+
+  const nav=[
+    {id:'dashboard',label:'Dashboard',icon:'dashboard'},
+    {id:'clients',label:'Müşteriler',icon:'clients'},
+    {id:'payments',label:'Müşteri Ödemeleri',icon:'payments'},
+    {id:'personal',label:'Kişisel Finans',icon:'personal'},
+    {id:'calendar',label:'Takvim',icon:'calendar'},
+    {id:'tahakkuk',label:'Tahakkuk Fişi',icon:'payments'},
+    {id:'tax-calendar',label:'Vergi Takvimi',icon:'calendar'},
+    {id:'reminders',label:'Hatırlatma Ayarları',icon:'templates'},
+    {id:'templates',label:'WA Taslakları',icon:'templates'},
+    {id:'wa-incoming',label:'Gelen Faturalar',icon:'logs'},
+    {id:'logs',label:'WA Geçmişi',icon:'logs'},
+    {id:'settings',label:'Ayarlar',icon:'settings'},
+  ];
+  const titles={dashboard:'Dashboard',clients:'Müşteriler',payments:'Müşteri Ödemeleri',personal:'Kişisel Finans',calendar:'Takvim',tahakkuk:'Tahakkuk Fişi','tax-calendar':'Vergi Takvimi',reminders:'Hatırlatma Ayarları',templates:'WhatsApp Taslakları','wa-incoming':'Gelen Faturalar (WA)',logs:'WhatsApp Geçmişi',settings:'Ayarlar'};
+
+  return(
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <div className="sidebar-logo">Mali Müşavir</div>
+          <div className="sidebar-sub">Asistan Paneli v6 ✓</div>
+        </div>
+        <nav className="sidebar-nav">
+          <div className="nav-section">Ana Menü</div>
+          {['dashboard','clients','payments','personal','calendar'].map(id=>{
+            const n=nav.find(x=>x.id===id);
+            return <button key={id} className={`nav-item ${page===id?'active':''}`} onClick={()=>setPage(id)}><Ico n={n.icon} s={15}/> {n.label}</button>;
+          })}
+          <button className={`nav-item ${page==='tahakkuk'?'active':''}`} onClick={()=>setPage('tahakkuk')} style={{color:page==='tahakkuk'?'#fff':'rgba(255,255,255,.7)',background:page==='tahakkuk'?'rgba(255,255,255,.13)':'transparent'}}><span style={{fontSize:15}}>📄</span> Tahakkuk Fişi</button>
+          <div className="nav-section" style={{marginTop:8}}>Otomasyon</div>
+          <button className={`nav-item ${page==='tax-calendar'?'active':''}`} onClick={()=>setPage('tax-calendar')}><span style={{fontSize:15}}>🗓️</span> Vergi Takvimi</button>
+          <button className={`nav-item ${page==='reminders'?'active':''}`} onClick={()=>setPage('reminders')}><span style={{fontSize:15}}>🔔</span> Hatırlatma Ayarları</button>
+          <div className="nav-section" style={{marginTop:8}}>WhatsApp</div>
+          {['templates','wa-incoming','logs'].map(id=>{
+            const n=nav.find(x=>x.id===id);
+            return <button key={id} className={`nav-item ${page===id?'active':''}`} onClick={()=>setPage(id)}><Ico n={n.icon} s={15}/> {n.label}{id==='wa-incoming'&&<span style={{marginLeft:'auto',background:'#C46A00',color:'#fff',borderRadius:10,fontSize:9,padding:'1px 5px',fontWeight:700}}>NEW</span>}</button>;
+          })}
+          <div className="nav-section" style={{marginTop:8}}>Hesap</div>
+          <button className={`nav-item ${page==='settings'?'active':''}`} onClick={()=>setPage('settings')}><Ico n="settings" s={15}/> Ayarlar</button>
+        </nav>
+        <div className="sidebar-footer">
+          <div className="user-info"><div className="user-dot"/>{username}</div>
+          <button className="nav-item" onClick={logout} style={{color:'rgba(255,255,255,.45)',fontSize:12}}><Ico n="logout" s={14}/> Çıkış Yap</button>
+        </div>
+      </aside>
+      <main className="main">
+        <div className="topbar">
+          <span className="topbar-title">{titles[page]}</span>
+          <div className="topbar-right">
+            <button className="btn btn-ghost btn-sm" onClick={()=>setPage('payments')} title="Bugünkü ödemelere git" style={{gap:6}}>
+              📅 Bugün
+            </button>
+            <button className="btn btn-wa btn-sm" onClick={()=>setWaModal({client:null,payment:null})} style={{gap:7}}>{WA_SVG} Hızlı WhatsApp</button>
+          </div>
+        </div>
+        <div className="content">
+          {page==='dashboard'&&<Dashboard onNavigate={setPage}/>}
+          {page==='clients'  &&<Clients onSendWa={openWa} toastFn={toastFn}/>}
+          {page==='payments' &&<Payments onSendWa={openWa} toastFn={toastFn}/>}
+          {page==='personal' &&<PersonalFinance toastFn={toastFn}/>}
+          {page==='calendar' &&<CalendarView onSendWa={openWa} toastFn={toastFn}/>}
+          {page==='tahakkuk'&&<TahakkukFisi toastFn={toastFn}/>}
+          {page==='tax-calendar'&&<TaxCalendar toastFn={toastFn}/>}
+          {page==='reminders'&&<ReminderSettings toastFn={toastFn}/>}
+          {page==='templates'&&<Templates toastFn={toastFn}/>}
+          {page==='wa-incoming'&&<WaIncoming toastFn={toastFn}/>}
+          {page==='logs'     &&<WhatsappLogs/>}
+          {page==='settings' &&<Settings username={username} toastFn={toastFn}/>}
+        </div>
+      </main>
+      {waModal&&<WhatsappModal client={waModal.client} payment={waModal.payment} onClose={()=>setWaModal(null)} toastFn={toastFn}/>}
+      <Toast msg={toast.msg} type={toast.type} onClose={()=>setToast({msg:''})}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
