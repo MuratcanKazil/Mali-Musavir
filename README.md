@@ -1,56 +1,107 @@
-# Mali Müşavir Paneli v4 — Masaüstü
+# 💼 Mali Müşavir Asistanı
 
-## Ne Değişti? (v3 → v4)
-- PostgreSQL → SQLite (kurulum gerektirmez, tek dosya)
-- SMS → WhatsApp link sistemi (ücretsiz, API yok)
-- Bulut deploy → yerel çalışır (internet gerekmez)
-- Veriler data/mali_musavir.db dosyasında saklanır
+Muhasebe ofisleri için geliştirilmiş, müşteri takibi ve vergi/prim hatırlatmalarını WhatsApp üzerinden otomatikleştiren masaüstü web uygulaması.
+
+> Gerçek bir mali müşavirlik ofisinin ihtiyaçlarından doğdu — aktif olarak kullanımda.
 
 ---
 
-## Kurulum (İlk Kez)
+## 🎯 Ne İşe Yarıyor?
 
-1. Python kur: https://www.python.org/downloads/ (3.10 veya üstü)
+Muhasebeciler onlarca müşterisinin KDV, SGK, stopaj ve muhasebe ücret ödemelerini takip etmek zorunda. Bu uygulama:
 
-2. CMD aç, backend klasörüne gir:
-   cd mali-musavir-desktop\backend
-   pip install -r requirements.txt
-
----
-
-## Çalıştırma
-
-Yöntem A: baslat.bat dosyasına çift tıkla (en kolay)
-
-Yöntem B - CMD ile:
-   cd mali-musavir-desktop\backend
-   python -m uvicorn main:app --host 127.0.0.1 --port 8000
-   
-Sonra frontend/index.html dosyasını tarayıcıda aç.
+- Yaklaşan son ödeme tarihlerini otomatik tespit eder
+- Müşteriye özel WhatsApp mesajı hazırlar
+- Tek tıkla WhatsApp Web üzerinden gönderim sağlar
+- Luca entegrasyonu ile muhasebe verilerini senkronize eder
 
 ---
 
-## Giriş Bilgileri
-Kullanıcı adı: admin
-Şifre: Mali2024!
+## ✨ Özellikler
+
+| Özellik | Açıklama |
+|---|---|
+| 👥 Müşteri Yönetimi | Müşteri bilgileri, vergi numaraları, iletişim kayıtları |
+| 📅 Vergi Takvimi | KDV, SGK, stopaj son ödeme tarihlerini otomatik hesaplar |
+| 💬 WhatsApp Entegrasyonu | Hazır mesaj taslakları ile tek tıkla gönderim |
+| 🔔 Otomatik Hatırlatmalar | Scheduler ile planlı bildirimler |
+| 📊 Dashboard | Aylık tahsilat durumu ve özet istatistikler |
+| 🔗 Luca Entegrasyonu | Muhasebe yazılımı senkronizasyonu |
+| 🔒 Güvenli Giriş | Oturum tabanlı kimlik doğrulama |
 
 ---
 
-## WhatsApp Nasıl Çalışır?
+## 🛠️ Teknolojiler
 
-1. Müşteri listesinden WA butonuna tıkla
-2. Taslak seç, tutar ve tarihi gir
-3. "WhatsApp Linki Oluştur" butonuna bas
-4. Mesajı gözden geçir
-5. "WhatsApp Web'de Aç & Gönder" butonuna bas
-6. Tarayıcıda WhatsApp Web açılır, mesaj hazır gelir
-7. Sadece Gönder tuşuna bas
+**Backend**
+- Python 3.10+
+- FastAPI — REST API
+- SQLAlchemy — ORM
+- SQLite — veritabanı (kurulum gerektirmez)
+- APScheduler — zamanlanmış görevler
 
-WhatsApp Web'e ilk girişte telefon ile QR kod taratman yeterli.
-Sonrasında oturum açık kalır.
+**Frontend**
+- Vanilla HTML / CSS / JavaScript
+- Tek sayfa uygulama (SPA)
 
 ---
 
-## Yedekleme
-data/mali_musavir.db dosyasını kopyalamak yeterli.
-Tüm veriler bu tek dosyada.
+## 🚀 Kurulum
+
+```bash
+# 1. Repoyu klonla
+git clone https://github.com/MuratcanKazil/Mali-Musavir.git
+cd Mali-Musavir
+
+# 2. Bağımlılıkları yükle
+cd backend
+pip install -r requirements.txt
+
+# 3. Uygulamayı başlat
+# Windows: ana klasördeki baslat.bat dosyasına çift tıkla
+# Manuel:
+python -m uvicorn main:app --host 127.0.0.1 --port 8000
+```
+
+Tarayıcıda `http://localhost:8000` adresine git.
+
+---
+
+## 📁 Proje Yapısı
+
+```
+mali-musavir-v6/
+├── backend/
+│   ├── main.py              # Uygulama giriş noktası
+│   ├── models.py            # Veritabanı modelleri
+│   ├── schemas.py           # Pydantic şemaları
+│   ├── database.py          # DB bağlantısı
+│   ├── scheduler.py         # Otomatik hatırlatmalar
+│   └── routers/
+│       ├── clients.py       # Müşteri CRUD
+│       ├── payments.py      # Ödeme takibi
+│       ├── whatsapp.py      # WA entegrasyonu
+│       ├── tax_calendar.py  # Vergi takvimi
+│       ├── dashboard.py     # İstatistikler
+│       ├── luca.py          # Luca senkronizasyonu
+│       └── auth.py          # Kimlik doğrulama
+├── frontend/
+│   └── index.html           # Tek sayfa uygulama
+└── baslat.bat               # Windows başlatıcı
+```
+
+---
+
+## 💡 Geliştirme Süreci
+
+Bu proje, gerçek bir iş problemi çözmek için sıfırdan geliştirildi. v1'den v6'ya iteratif geliştirme sürecinde:
+
+- PostgreSQL → SQLite (dağıtım kolaylığı)
+- SMS API → WhatsApp Web (ücretsiz, sıfır konfigürasyon)
+- Bulut deploy → yerel çalışır masaüstü uygulama
+
+---
+
+## 📄 Lisans
+
+MIT
